@@ -1,0 +1,23 @@
+##############
+## REQUIRED ##
+##############
+
+TEMPLATE_DIR
+VASP_MPI
+VASP_KPTS
+VASP_GAMMA
+VASP_NCORE
+
+
+###########
+## MAYBE ##
+###########
+
+VASP_LD_LIBRARY_PATH
+PATH
+
+##############
+## OPTIONAL ##
+##############
+
+VASP_DEFAULT_TIME

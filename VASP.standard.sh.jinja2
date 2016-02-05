@@ -1,0 +1,70 @@
+#!/bin/bash
+{% if queue_type == "slurm" %}#SBATCH -J {{ J }}
+#SBATCH --time={{ time }}:00:00
+#SBATCH -N {{ nodes }}
+#SBATCH --ntasks-per-node {{ cores }}
+#SBATCH -o {{ name }}-%j.out
+#SBATCH -e {{ name }}-%j.err
+#SBATCH --qos {{ queue }}
+#SBATCH --mem={{ mem }}
+{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
+
+{% elif queue_type == "pbs" %}#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ cores }}{% if computer == "psiops" %}{% if nodes == 1 %}:gb{% else %}:ib{% endif %}{% endif %}
+#PBS -l walltime={{ time }}:00:00
+#PBS -q {{ queue }}
+#PBS -N {{ name }}
+{% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
+{% endif %}
+
+
+{% if computer == "janus" %}
+# Load Modules
+
+module purge
+module load intel/impi-15.0.1
+export OMP_NUM_THREADS=1
+echo $SLURM_JOB_NODELIST
+
+{% elif computer == "peregrine" %}
+# Load Modules
+
+module purge
+module load vasp
+module load python/2.7.8
+
+{% else %}
+
+LD_LIBRARY_PATH=$VASP_LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+PATH=$VASP_PATH
+export PATH
+
+{% endif %}
+
+export OMP_NUM_THREADS=1
+
+
+python -c "
+
+from custodian.vasp.jobs import *
+from custodian.vasp.handlers import *
+from custodian.custodian import *
+from Classes_Custodian import *
+
+vaspjob = [{{ jobtype }}Job(['"$VASP_MPI"', '-np', '{{ tasks }}', '"$VASP_KPTS"'], '{{ logname }}',
+                            gamma_vasp_cmd=['"$VASP_MPI"', '-np', '{{ tasks }}', '"$VASP_GAMMA"'], auto_npar=False, auto_gamma={{ auto_gamma }})]
+
+{% if jobtype == "NEB" %}
+handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60)]
+
+{% elif jobtype == "Dimer" %}
+handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60),
+            DimerDivergingHandler(), DimerCheckMins()]
+
+{% elif jobtype == "Standard" %}
+handlers = [WalltimeHandler({{ time }}*60*60), NonConvergingErrorHandler(nionic_steps=25)]
+{% endif %}
+
+c = Custodian(handlers, vaspjob, max_errors=10)
+c.run()"
