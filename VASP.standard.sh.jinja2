@@ -52,8 +52,8 @@ from custodian.vasp.handlers import *
 from custodian.custodian import *
 from Classes_Custodian import *
 
-vaspjob = [{{ jobtype }}Job(['"$VASP_MPI"', '-np', '{{ tasks }}', '"$VASP_KPTS"'], '{{ logname }}',
-                            gamma_vasp_cmd=['"$VASP_MPI"', '-np', '{{ tasks }}', '"$VASP_GAMMA"'], auto_npar=False, auto_gamma={{ auto_gamma }})]
+vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}',
+                            gamma_vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_gamma }}'], auto_npar=False, auto_gamma={{ auto_gamma }})]
 
 {% if jobtype == "NEB" %}
 handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60)]
