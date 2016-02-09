@@ -1,5 +1,5 @@
 #!/bin/bash
-{% if queue_type == "slurm" %}#SBATCH -J {{ J }}
+{% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
 #SBATCH -N {{ nodes }}
 #SBATCH --ntasks-per-node {{ cores }}
