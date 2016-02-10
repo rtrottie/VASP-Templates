@@ -43,6 +43,7 @@ export PATH
 {% endif %}
 
 export OMP_NUM_THREADS=1
+export VASP_PROCS={{ tasks }}
 
 ./gfstringq.exe 0 {{ tasks }} > scratch/paragsm0000
 
