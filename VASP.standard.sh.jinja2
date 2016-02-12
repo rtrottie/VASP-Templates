@@ -56,10 +56,10 @@ vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}
                             gamma_vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_gamma }}'], auto_npar=False, auto_gamma={{ auto_gamma }})]
 
 {% if jobtype == "NEB" %}
-handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60)]
+handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
 
 {% elif jobtype == "Dimer" %}
-handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 120*60),
+handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
             DimerDivergingHandler(), DimerCheckMins()]
 
 {% elif jobtype == "Standard" %}
