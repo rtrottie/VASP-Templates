@@ -29,8 +29,7 @@ echo $SLURM_JOB_NODELIST
 {% elif computer == "peregrine" %}
 # Load Modules
 
-module purge
-module load impi-intel/5.0.3-15.0.3
+source ~/.bashrc_vasp
 
 
 {% else %}
