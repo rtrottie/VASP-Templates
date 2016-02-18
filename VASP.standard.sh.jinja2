@@ -14,6 +14,8 @@
 #PBS -l walltime={{ time }}:00:00
 #PBS -q {{ queue }}
 #PBS -N {{ name }}
+
+cd $PBS_O_WORKDIR
 {% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
 {% endif %}
 
