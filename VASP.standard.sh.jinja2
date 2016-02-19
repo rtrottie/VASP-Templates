@@ -19,30 +19,9 @@ cd $PBS_O_WORKDIR
 {% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
 {% endif %}
 
-
-{% if computer == "janus" %}
-# Load Modules
-
-module load python/anaconda-2.1.0
-module load intel/impi-15.0.1
-export OMP_NUM_THREADS=1
-echo $SLURM_JOB_NODELIST
-
-{% elif computer == "peregrine" or computer == "psiops" %}
 # Set Environment
 
 source ~/.bashrc_vasp
-
-
-{% else %}
-
-LD_LIBRARY_PATH=$VASP_LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
-PATH=$VASP_PATH
-export PATH
-
-{% endif %}
-
 export OMP_NUM_THREADS=1
 
 
