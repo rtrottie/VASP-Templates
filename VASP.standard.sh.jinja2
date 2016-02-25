@@ -22,6 +22,7 @@ cd $PBS_O_WORKDIR
 # Set Environment
 
 source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
 
 
 python -c "
