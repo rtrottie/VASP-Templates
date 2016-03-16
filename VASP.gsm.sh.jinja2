@@ -23,8 +23,6 @@
 source ~/.bashrc_vasp
 export OMP_NUM_THREADS={{ openmp }}
 
-{% else %}
-
 LD_LIBRARY_PATH=$VASP_LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 PATH=$VASP_PATH
