@@ -18,21 +18,10 @@
 {% endif %}
 
 
-{% if computer == "janus" %}
-# Load Modules
+# Set Environment
 
-module purge
-module load intel/impi-15.0.1
-module load python/anaconda-2.1.0
-export OMP_NUM_THREADS=1
-echo $SLURM_JOB_NODELIST
-
-{% elif computer == "peregrine" %}
-# Load Modules
-
-module purge
-module load vasp
-module load python/2.7.8
+source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
 
 {% else %}
 
