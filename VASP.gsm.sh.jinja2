@@ -22,15 +22,6 @@
 
 source ~/.bashrc_vasp
 export OMP_NUM_THREADS={{ openmp }}
-
-LD_LIBRARY_PATH=$VASP_LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
-PATH=$VASP_PATH
-export PATH
-
-{% endif %}
-
-export OMP_NUM_THREADS=1
 export VASP_PROCS={{ tasks }}
 
 ./gfstringq.exe 0 {{ tasks }} > scratch/paragsm0000
