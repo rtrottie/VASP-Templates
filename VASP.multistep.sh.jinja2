@@ -54,7 +54,6 @@ def get_runs(max_steps=100):
         vinput = VaspInput.from_directory('.')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
-        del settings['required']
         settings.append({'filename': 'CONTCAR',
                          'action': {'_file_copy': {'dest': 'POSCAR'}}})
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False, settings_override=settings)
