@@ -58,14 +58,6 @@ def get_runs(max_steps=100):
                          "action": {"_file_copy": {"dest": "POSCAR"}}})
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False, settings_override=settings)
 
-if jobtype == "NEB":
-    handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
-elif jobtype == "Dimer":
-    handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
-                DimerDivergingHandler(), DimerCheckMins(), NonConvergingErrorHandler(nionic_steps=50, change_algo=True), UnconvergedErrorHandler()]
-elif jobtype == "Standard":
-    handlers = [WalltimeHandler({{ time }}*60*60), NonConvergingErrorHandler(nionic_steps=25, change_algo=True), UnconvergedErrorHandler()]
-
 
 c = Custodian(handlers, get_runs(), max_errors=10)
 c.run()"
