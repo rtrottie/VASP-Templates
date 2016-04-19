@@ -32,8 +32,14 @@ from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from custodian.custodian import *
 from Classes_Custodian import *
+import Upgrade_Run
 
-vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False)]
+def get_runs(max_steps=100):
+    for i in xrange(max_steps)
+        vinput = VaspInput.from_directory(".")
+        stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
+        settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
+        yield {{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False)
 
 {% if jobtype == "NEB" %}
 handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
