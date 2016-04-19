@@ -46,20 +46,23 @@ elif jobtype == 'Dimer':
     job = DimerJob
 elif jobtype == 'Standard':
     handlers = [WalltimeHandler({{ time }}*60*60), NonConvergingErrorHandler(nionic_steps=25, change_algo=True), UnconvergedErrorHandler()]
-    job = VaspJob
+    job = StandardJob
 
 
 def get_runs(max_steps=100):
     for i in xrange(max_steps):
+        vinput = VaspInput.from_directory('.')
+        stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         if i == 0:
             settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
         else:
-            settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER'] + 1])
+            stage_number = vinput['INCAR']['STAGE_NUMBER'] + 1
+            if stage_number >= len(stages):
+                break
+            settings = Upgrade_Run.parse_stage_update(stages[stage_number])
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
-        vinput = VaspInput.from_directory('.')
-        stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
-        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False, settings_override=settings)
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings)
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
