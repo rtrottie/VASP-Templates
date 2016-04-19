@@ -51,12 +51,14 @@ elif jobtype == 'Standard':
 
 def get_runs(max_steps=100):
     for i in xrange(max_steps):
-        vinput = VaspInput.from_directory('.')
-        stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
-        settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
-        if i != 0:
+        if i == 0:
+            settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
+        else:
+            settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER'] + 1])
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
+        vinput = VaspInput.from_directory('.')
+        stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False, settings_override=settings)
 
 
