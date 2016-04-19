@@ -34,24 +34,24 @@ from custodian.custodian import *
 from Classes_Custodian import *
 import Upgrade_Run
 
-jobtype = {{ jobtype }}
+jobtype = '{{ jobtype }}
 
 
-if jobtype == "NEB":
+if jobtype == 'NEB':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
     job = NEBJob
-elif jobtype == "Dimer":
+elif jobtype == 'Dimer':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
                 DimerDivergingHandler(), DimerCheckMins(), NonConvergingErrorHandler(nionic_steps=50, change_algo=True), UnconvergedErrorHandler()]
     job = DimerJob
-elif jobtype == "Standard":
+elif jobtype == 'Standard':
     handlers = [WalltimeHandler({{ time }}*60*60), NonConvergingErrorHandler(nionic_steps=25, change_algo=True), UnconvergedErrorHandler()]
     job = VaspJob
 
 
 def get_runs(max_steps=100):
-    for i in xrange(max_steps)
-        vinput = VaspInput.from_directory(".")
+    for i in xrange(max_steps):
+        vinput = VaspInput.from_directory('.')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']])
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, backup=False, settings_override=settings)
