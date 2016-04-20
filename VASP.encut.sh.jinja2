@@ -1,0 +1,84 @@
+#!/bin/bash
+{% if queue_type == "slurm" %}#SBATCH -J {{ name }}
+#SBATCH --time={{ time }}:00:00
+#SBATCH -N {{ nodes }}
+#SBATCH --ntasks-per-node {{ ppn }}
+#SBATCH -o {{ name }}-%j.out
+#SBATCH -e {{ name }}-%j.err
+#SBATCH --qos {{ queue }}
+#SBATCH --mem={{ mem }}
+{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
+
+{% elif queue_type == "pbs" %}#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
+#PBS -l walltime={{ time }}:00:00
+#PBS -q {% if computer == "psiops" %}batch{% else %}{{ queue }}{% endif %}
+#PBS -N {{ name }}
+{% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
+cd $PBS_O_WORKDIR
+echo $PBS_O_WORKDIR
+{% endif %}
+
+
+# Set Environment
+
+source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
+
+
+python -c "
+
+from custodian.vasp.jobs import *
+from custodian.vasp.handlers import *
+from custodian.custodian import *
+from Classes_Custodian import *
+import Upgrade_Run
+import logging
+
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename="run.log")
+
+target = {{ convergence_criteria }}
+jobtype = '{{ jobtype }}'
+
+if jobtype == 'Standard':
+    handlers = [WalltimeHandler({{ time }}*60*60), NonConvergingErrorHandler(nionic_steps=25, change_algo=True), UnconvergedErrorHandler()]
+    job = StandardJob
+else:
+    raise Exception('Must be STandard VASP run')
+
+
+def get_runs(max_steps=100):
+    energy_1 = 0
+    energy_2 = 0
+    for i in xrange(max_steps):
+        vinput = VaspInput.from_directory('.')
+        encut = vinput['INCAR']['ENCUT']
+        if i == 0:
+            settings = []
+        else:
+            settings = []
+            v = Vasprun('vasprun.xml')
+            e_per_atom = v.final_energy / len(v.final_structure)
+            ediff_1 = abs(e_per_atom - energy_1)
+            ediff_2 = abs(e_per_atom - energy_2)
+            if ediff_1 < target and ediff_2 < target:
+                logging.info("Converged to {} eV/atom!".format(ediff_2))
+                break
+            else:
+                logging.info('Re-Running at ' + str(encut) + ' with {} eV/atom').format(ediff_2)
+                energy_1 = e_per_atom
+                energy_2 = energy_1
+                settings = [
+                    {'file': 'CONTCAR',
+                     'action': {'_file_copy': {'dest': 'POSCAR'}}},
+                    {'dict': 'INCAR',
+                     'action': {'_set': {'ENCUT' : encut + 25}}}
+
+                ]
+
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings, suffix=str(encut))
+
+
+c = Custodian(handlers, get_runs(), max_errors=10)
+c.run()"
