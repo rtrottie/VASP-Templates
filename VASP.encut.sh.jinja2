@@ -77,7 +77,7 @@ def get_runs(max_steps=100):
 
                 ]
 
-        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings, suffix=str(encut))
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings, suffix='.' + str(encut), final=False)
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
