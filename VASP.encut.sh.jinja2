@@ -60,11 +60,11 @@ def get_runs(max_steps=100):
             settings = []
             v = Vasprun('vasprun.xml')
             e_per_atom = v.final_energy / len(v.final_structure)
-            logging.info(str(encut) + ' completed with ' + str(e_per_atom) + ' eV/atom').format(ediff_2)
+            logging.info(str(encut) + ' completed with ' + str(e_per_atom) + ' eV/atom')
             ediff_1 = abs(e_per_atom - energy_1)
             ediff_2 = abs(e_per_atom - energy_2)
             if ediff_1 < target and ediff_2 < target:
-                logging.info('Converged to {} eV/atom!'.format(ediff_2))
+                logging.info('Converged to ' + ediff_1 + ' and ' + ediff_2 + ' eV/atom!')
                 break
             else:
                 encut += 25
