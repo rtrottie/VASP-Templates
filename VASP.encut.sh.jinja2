@@ -38,7 +38,7 @@ import logging
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename="run.log")
 
-target = {{ convergence_criteria }}
+target = {{ target }}
 jobtype = '{{ jobtype }}'
 
 if jobtype == 'Standard':
