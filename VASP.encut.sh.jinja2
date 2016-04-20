@@ -58,7 +58,7 @@ def get_runs(max_steps=100):
             settings = []
         else:
             settings = []
-            v = Vasprun('vasprun.xml')
+            v = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False)
             e_per_atom = v.final_energy / len(v.final_structure)
             logging.info(str(encut) + ' completed with ' + str(e_per_atom) + ' eV/atom')
             ediff_1 = abs(e_per_atom - energy_1)
