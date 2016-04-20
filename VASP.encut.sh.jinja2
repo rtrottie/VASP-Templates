@@ -68,8 +68,8 @@ def get_runs(max_steps=100):
                 break
             else:
                 encut += 25
-                energy_1 = e_per_atom
                 energy_2 = energy_1
+                energy_1 = e_per_atom
                 settings = [
                     {'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}},
