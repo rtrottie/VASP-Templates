@@ -33,6 +33,10 @@ from custodian.vasp.handlers import *
 from custodian.custodian import *
 from Classes_Custodian import *
 import Upgrade_Run
+import logging
+
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
 
 jobtype = '{{ jobtype }}'
 
