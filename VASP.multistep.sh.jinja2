@@ -37,8 +37,9 @@ import logging
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
-
 jobtype = '{{ jobtype }}'
+vasp_kpts = '{{ vasp_kpts }}'
+vasp_gamma =  '{{ vasp_gamma }}'
 
 
 if jobtype == 'NEB':
@@ -66,7 +67,11 @@ def get_runs(max_steps=100):
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], vinput['INCAR'])
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
-        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings)
+        if 'AUTO_GAMMA' in vinput['INCAR']['AUTO_GAMMA'] and vinput['INCAR']['AUTO_GAMMA']
+            vasp = vasp_gamma
+        else:
+            vasp = vasp_kpts
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', vasp, '{{ logname }}', auto_npar=False, settings_override=settings)
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
