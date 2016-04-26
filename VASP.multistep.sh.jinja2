@@ -47,7 +47,7 @@ if jobtype == 'NEB':
     job = NEBJob
 elif jobtype == 'Dimer':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
-                DimerDivergingHandler(), DimerCheckMins(), UnconvergedErrorHandler()]
+                DimerDivergingHandler(), UnconvergedErrorHandler()]
     job = DimerJob
 elif jobtype == 'Standard':
     handlers = [WalltimeHandler({{ time }}*60*60), UnconvergedErrorHandler()]
