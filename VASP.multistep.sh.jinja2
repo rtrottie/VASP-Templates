@@ -56,22 +56,22 @@ elif jobtype == 'Standard':
 
 def get_runs(max_steps=100):
     for i in xrange(max_steps):
-        vinput = VaspInput.from_directory('.')
+        incar = Incar.from_file('INCAR')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
-        stage_number = vinput['INCAR']['STAGE_NUMBER'] + 1
+        stage_number = incar['STAGE_NUMBER'] + 1
         if i == 0:
-            settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']], vinput['INCAR'])
+            settings = Upgrade_Run.parse_stage_update(stages[incar['STAGE_NUMBER']], incar)
         else:
             if stage_number >= len(stages):
                 break
-            settings = Upgrade_Run.parse_stage_update(stages[stage_number], vinput['INCAR'])
+            settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
         if stage_number == len(stages) -1:
             final = True
         else:
             final = False
-        if 'AUTO_GAMMA' in vinput['INCAR'] and vinput['INCAR']['AUTO_GAMMA']:
+        if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
             vasp = vasp_gamma
         else:
             vasp = vasp_kpts
