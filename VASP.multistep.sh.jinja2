@@ -58,10 +58,10 @@ def get_runs(max_steps=100):
     for i in xrange(max_steps):
         vinput = VaspInput.from_directory('.')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
+        stage_number = vinput['INCAR']['STAGE_NUMBER'] + 1
         if i == 0:
             settings = Upgrade_Run.parse_stage_update(stages[vinput['INCAR']['STAGE_NUMBER']], vinput['INCAR'])
         else:
-            stage_number = vinput['INCAR']['STAGE_NUMBER'] + 1
             if stage_number >= len(stages):
                 break
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], vinput['INCAR'])
