@@ -67,11 +67,15 @@ def get_runs(max_steps=100):
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], vinput['INCAR'])
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
+        if stage_number == len(stages) -1:
+            final = True
+        else:
+            final = False
         if 'AUTO_GAMMA' in vinput['INCAR'] and vinput['INCAR']['AUTO_GAMMA']:
             vasp = vasp_gamma
         else:
             vasp = vasp_kpts
-        yield job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, settings_override=settings)
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, settings_override=settings, final=final)
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
