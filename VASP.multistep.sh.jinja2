@@ -45,13 +45,21 @@ vasp_gamma =  '{{ vasp_gamma }}'
 if jobtype == 'NEB':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
     job = NEBJob
+    continuation = [{'file': 'CONTCAR',
+                     'action': {'_file_copy': {'dest': 'POSCAR'}}}]
 elif jobtype == 'Dimer':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
                 DimerDivergingHandler(), UnconvergedErrorHandler()]
     job = DimerJob
+    continuation = [{'file': 'CONTCAR',
+                     'action': {'_file_copy': {'dest': 'POSCAR'}}},
+                    {'file': 'NEWMODECAR',
+                     'action' : {'file_copy': {'dest': 'MODECAR'}}}]
 elif jobtype == 'Standard':
     handlers = [WalltimeHandler({{ time }}*60*60), UnconvergedErrorHandler()]
     job = StandardJob
+    continuation = [{'file': 'CONTCAR',
+                     'action': {'_file_copy': {'dest': 'POSCAR'}}}]
 
 
 def get_runs(max_steps=100):
@@ -66,8 +74,7 @@ def get_runs(max_steps=100):
             if stage_number >= len(stages):
                 break
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
-            settings.append({'file': 'CONTCAR',
-                              'action': {'_file_copy': {'dest': 'POSCAR'}}})
+            settings + continuation
         if stage_number == len(stages) - 1:
             final = True
         else:
