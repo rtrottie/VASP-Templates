@@ -58,16 +58,17 @@ def get_runs(max_steps=100):
     for i in xrange(max_steps):
         incar = Incar.from_file('INCAR')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
-        stage_number = incar['STAGE_NUMBER'] + 1
+        stage_number = incar['STAGE_NUMBER']
         if i == 0:
             settings = Upgrade_Run.parse_stage_update(stages[incar['STAGE_NUMBER']], incar)
         else:
+            stage_number += 1
             if stage_number > len(stages):
                 break
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
             settings.append({'file': 'CONTCAR',
                               'action': {'_file_copy': {'dest': 'POSCAR'}}})
-        if stage_number == len(stages) -1:
+        if stage_number == len(stages):
             final = True
         else:
             final = False
