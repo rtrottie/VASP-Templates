@@ -62,7 +62,7 @@ def get_runs(max_steps=100):
         if i == 0:
             settings = Upgrade_Run.parse_stage_update(stages[incar['STAGE_NUMBER']], incar)
         else:
-            if stage_number >= len(stages):
+            if stage_number > len(stages):
                 break
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
             settings.append({'file': 'CONTCAR',
