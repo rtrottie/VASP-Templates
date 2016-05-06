@@ -58,7 +58,7 @@ elif jobtype == 'Dimer':
     continuation = [{'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}},
                     {'file': 'NEWMODECAR',
-                     'action' : {'file_copy': {'dest': 'MODECAR'}}}]
+                     'action' : {'_file_copy': {'dest': 'MODECAR'}}}]
 elif jobtype == 'Standard':
     handlers = [WalltimeHandler({{ time }}*60*60, electronic_step_stop=True), UnconvergedErrorHandler()]
     job = StandardJob
