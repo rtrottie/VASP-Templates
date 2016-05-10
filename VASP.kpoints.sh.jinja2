@@ -48,7 +48,7 @@ else:
     raise Exception('Must be STandard VASP run')
 
 
-def get_runs(vasp_command, target=1e-3, max_steps=10, mode='linear'):
+def get_runs(max_steps=10, mode='linear'):
     energy = 0
     vinput = VaspInput.from_directory('.')
     kpoints = vinput['KPOINTS'].kpts[0]
