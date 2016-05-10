@@ -61,6 +61,7 @@ def get_runs(max_steps=10, mode='linear'):
             settings = None
             backup = True
         else:
+            logging.info('x'.join(map(str, m)) + ' completed with ' + str(e_per_atom) + ' eV/atom')
             backup = False
             v = Vasprun('vasprun.xml')
             e_per_atom = v.final_energy / len(v.final_structure)
@@ -71,11 +72,9 @@ def get_runs(max_steps=10, mode='linear'):
             else:
                 energy = e_per_atom
                 settings = [
-                    {'dict': 'INCAR',
-                     'action': {'_set': {'ISTART': 1}}},
                     {'dict': 'KPOINTS',
                      'action': {'_set': {'kpoints': [m]}}},
-                    {'filename': 'CONTCAR',
+                    {'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}}]
 
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False,
