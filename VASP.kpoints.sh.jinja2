@@ -48,12 +48,12 @@ else:
     raise Exception('Must be STandard VASP run')
 
 
-def get_runs(vasp_command, target=1e-3, max_steps=10, mode="linear"):
+def get_runs(vasp_command, target=1e-3, max_steps=10, mode='linear'):
     energy = 0
-    vinput = VaspInput.from_directory(".")
-    kpoints = vinput["KPOINTS"].kpts[0]
+    vinput = VaspInput.from_directory('.')
+    kpoints = vinput['KPOINTS'].kpts[0]
     for i in xrange(max_steps):
-        if mode == "linear":
+        if mode == 'linear':
             m = [k * (i + 1) for k in kpoints]
         else:
             m = [k + 1 for k in kpoints]
@@ -62,23 +62,23 @@ def get_runs(vasp_command, target=1e-3, max_steps=10, mode="linear"):
             backup = True
         else:
             backup = False
-            v = Vasprun("vasprun.xml")
+            v = Vasprun('vasprun.xml')
             e_per_atom = v.final_energy / len(v.final_structure)
             ediff = abs(e_per_atom - energy)
             if ediff < target:
-                logging.info("Converged to {} eV/atom!".format(ediff))
+                logging.info('Converged to {} eV/atom!'.format(ediff))
                 break
             else:
                 energy = e_per_atom
                 settings = [
-                    {"dict": "INCAR",
-                     "action": {"_set": {"ISTART": 1}}},
+                    {'dict': 'INCAR',
+                     'action': {'_set': {'ISTART': 1}}},
                     {'dict': 'KPOINTS',
                      'action': {'_set': {'kpoints': [m]}}},
-                    {"filename": "CONTCAR",
-                     "action": {"_file_copy": {"dest": "POSCAR"}}}]
+                    {'filename': 'CONTCAR',
+                     'action': {'_file_copy': {'dest': 'POSCAR'}}}]
         yield job(vasp_command, final=False, backup=backup,
-                      suffix=".kpoints.{}".format("x".join(map(str, m))),
+                      suffix='.kpoints.{}'.format('x'.join(map(str, m))),
                       settings_override=settings)def get_runs(max_steps=40):
 
 
