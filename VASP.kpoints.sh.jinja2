@@ -79,7 +79,7 @@ def get_runs(vasp_command, target=1e-3, max_steps=10, mode='linear'):
                      'action': {'_file_copy': {'dest': 'POSCAR'}}}]
         yield job(vasp_command, final=False, backup=backup,
                       suffix='.kpoints.{}'.format('x'.join(map(str, m))),
-                      settings_override=settings)def get_runs(max_steps=40):
+                      settings_override=settings)
 
 
 
