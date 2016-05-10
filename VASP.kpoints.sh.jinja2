@@ -56,7 +56,7 @@ def get_runs(max_steps=20, mode='not'):
         if mode == 'linear':
             m = [k * (i + 1) for k in kpoints]
         else:
-            m = [k + 1 for k in kpoints]
+            m = [k + i for k in kpoints]
         if i == 0:
             settings = None
             backup = True
