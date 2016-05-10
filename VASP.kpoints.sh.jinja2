@@ -48,7 +48,7 @@ else:
     raise Exception('Must be STandard VASP run')
 
 
-def get_runs(max_steps=20, mode='linear'):
+def get_runs(max_steps=20, mode='not'):
     energy = 0
     vinput = VaspInput.from_directory('.')
     kpoints = vinput['KPOINTS'].kpts[0]
@@ -82,5 +82,5 @@ def get_runs(max_steps=20, mode='linear'):
 
 
 
-c = Custodian(handlers, get_runs(mode='non-linear'), max_errors=10)
+c = Custodian(handlers, get_runs(), max_errors=10)
 c.run()"
