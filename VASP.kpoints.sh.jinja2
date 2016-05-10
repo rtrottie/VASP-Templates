@@ -77,9 +77,9 @@ def get_runs(max_steps=10, mode='linear'):
                      'action': {'_set': {'kpoints': [m]}}},
                     {'filename': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}}]
-        yield job(vasp_command, final=False, backup=backup,
-                      suffix='.kpoints.{}'.format('x'.join(map(str, m))),
-                      settings_override=settings)
+
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False,
+                      settings_override=settings, suffix='.kpoints.{}'.format('x'.join(map(str, m))), final=False, backup=backup)
 
 
 
