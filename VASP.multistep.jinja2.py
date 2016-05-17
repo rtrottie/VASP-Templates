@@ -1,4 +1,4 @@
-{% extends "VASP.base.jinja2.sh" }
+{% extends "VASP.base.jinja2.sh" %}
 {% block python %}
 from custodian.custodian import *
 from Classes_Custodian import *
