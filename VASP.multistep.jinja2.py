@@ -1,35 +1,5 @@
-#!/bin/bash
-{% if queue_type == "slurm" %}#SBATCH -J {{ name }}
-#SBATCH --time={{ time }}:00:00
-#SBATCH -N {{ nodes }}
-#SBATCH --ntasks-per-node {{ ppn }}
-#SBATCH -o {{ name }}-%j.out
-#SBATCH -e {{ name }}-%j.err
-#SBATCH --qos {{ queue }}
-#SBATCH --mem={{ mem }}
-{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
-
-{% elif queue_type == "pbs" %}#PBS -j eo
-#PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
-#PBS -l walltime={{ time }}:00:00
-#PBS -q {% if computer == "psiops" %}batch{% else %}{{ queue }}{% endif %}
-#PBS -N {{ name }}
-{% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
-cd $PBS_O_WORKDIR
-echo $PBS_O_WORKDIR
-{% endif %}
-
-
-# Set Environment
-
-source ~/.bashrc_vasp
-export OMP_NUM_THREADS={{ openmp }}
-
-
-python -c "
-
-from custodian.vasp.jobs import *
-from custodian.vasp.handlers import *
+{% extends "VASP.base.jinja2.sh" }
+{% block python %}
 from custodian.custodian import *
 from Classes_Custodian import *
 import Upgrade_Run
@@ -91,4 +61,5 @@ def get_runs(max_steps=100):
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
-c.run()"
+c.run()
+{% endblock python %}
