@@ -64,7 +64,7 @@ def get_runs(max_steps=20, mode='not'):
             backup = False
             v = Vasprun('vasprun.xml')
             e_per_atom = v.final_energy / len(v.final_structure)
-            logging.info('x'.join(map(str, m)) + ' completed with ' + str(e_per_atom) + ' eV/atom')
+            logging.info('x'.join(map(lambda k : str(k-1), m)) + ' completed with ' + str(e_per_atom) + ' eV/atom')
             ediff = abs(e_per_atom - energy)
             if ediff < target:
                 logging.info('Converged to {} eV/atom!'.format(ediff))
