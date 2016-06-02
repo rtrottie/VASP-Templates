@@ -17,7 +17,7 @@ if jobtype == 'NEB':
     job = NEBJob
     images = Incar.from_file('INCAR')['IMAGES']
     continuation = []
-    for i in range(images):
+    for i in range(1, images-1):
         folder = str(i).zfill(2)
         continuation.append({'file': os.path.join(folder, 'CONTCAR'),
                              'action': {'_file_copy': {'dest': os.path.join(folder, 'POSCAR')}}})
