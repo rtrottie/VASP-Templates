@@ -62,7 +62,8 @@ else:
     nupdown_check = True
 
 if 'AUTO_NUPDOWN' in incar and nupdown_check: # have a guess of nupdown
-    pass
+    override = [{"dict": "INCAR",  "action": {"_set": {"NUPDOWN": nupdown_best}}}]
+    run_vasp(override)
 elif 'AUTO_NUPDOWN' in incar and not nupdown_check: # First run in new folder
         energies = []
         for nupdown in incar['AUTO_NUPDOWN']:  # get energies for each desired NUPDOWN
@@ -74,7 +75,13 @@ elif 'AUTO_NUPDOWN' in incar and not nupdown_check: # First run in new folder
             energies.append(energy())
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
-            f.writelines(str([incar['AUTO_NUPDOWN'][i]]), '0')
+            nupdown_best = incar['AUTO_NUPDOWN'][i]
+            f.writelines(str([nupdown_best]), '0')
+        suffix = '.' + str(nupdown_best)
+        files = [f for f in os.listdir('.') if f.endswith(suffix)]
+        for f in files:
+            shutil.copy(f, f[:-len(suffix)])
+
 else:
     run_vasp()
 
