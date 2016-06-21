@@ -70,7 +70,8 @@ if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
     run_vasp(override)
 elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         energies = []
-        for nupdown in incar['AUTO_NUPDOWN']:  # get energies for each desired NUPDOWN
+        auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split(',') ]
+        for nupdown in auto_nupdown:  # get energies for each desired NUPDOWN
             override = [{"dict": "INCAR",
                          "action": {"_set": {"NUPDOWN": nupdown,
                                              'ISTART': 0,        # Don't use previously converged WAVECAR and CHGCAR
@@ -79,7 +80,7 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
             energies.append(energy())
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
-            nupdown_best = incar['AUTO_NUPDOWN'][i]
+            nupdown_best = auto_nupdown[i]
             f.writelines(str([nupdown_best]), '0')
         suffix = '.' + str(nupdown_best)
         files = [f for f in os.listdir('.') if f.endswith(suffix)]
