@@ -8,6 +8,13 @@ from custodian.custodian import *
 from Classes_Pymatgen import *
 from Classes_Custodian import StandardJob
 
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except:
+        return False
+
 def energy(suffix=''):
     '''
     Gets energy for run in current directory
@@ -71,7 +78,7 @@ if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
     run_vasp(override)
 elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         energies = []
-        auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split('-') ]
+        auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split() if is_int(x)]
         for nupdown in auto_nupdown:  # get energies for each desired NUPDOWN
             override = [{"dict": "INCAR",
                          "action": {"_set": {"NUPDOWN": nupdown,
