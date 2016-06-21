@@ -6,6 +6,7 @@ from custodian.vasp.handlers import *
 import numpy as np
 from custodian.custodian import *
 from Classes_Pymatgen import *
+from Classes_Custodian import StandardJob
 
 def energy():
     '''
@@ -24,7 +25,6 @@ def run_vasp(override=[], suffix=''):
     :param suffix:
     :return:
     '''
-    from Classes_Custodian import StandardJob
 
     # Determine wheter to use Gamma optimized vasp
     incar = Incar.from_file('INCAR')
