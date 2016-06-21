@@ -25,8 +25,9 @@ def run_vasp(override=[], suffix=''):
     :param suffix:
     :return:
     '''
-    from Classes_Pymatgen import *
+    from Classes_Pymatgen import Incar
     from Classes_Custodian import StandardJob
+    from custodian.custodian import Custodian
 
     # Determine wheter to use Gamma optimized vasp
     incar = Incar.from_file('INCAR')
