@@ -47,7 +47,7 @@ def run_vasp(override=[], suffix=''):
 
     handlers = []
     vaspjob = [StandardJob([vasp, '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix)]
+                           settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
 
