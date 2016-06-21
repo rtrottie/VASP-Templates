@@ -8,14 +8,14 @@ from custodian.custodian import *
 from Classes_Pymatgen import *
 from Classes_Custodian import StandardJob
 
-def energy():
+def energy(suffix=''):
     '''
     Gets energy for run in current directory
 
     :return:
     '''
     from pymatgen.io.vasp.outputs import Vasprun
-    v = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False)
+    v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
 def run_vasp(override=[], suffix=''):
@@ -77,8 +77,9 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
                          "action": {"_set": {"NUPDOWN": nupdown,
                                              'ISTART': 0,        # Don't use previously converged WAVECAR and CHGCAR
                                              'ICHARG': 2}}}]
-            run_vasp(override, '.' + str(nupdown))
-            energies.append(energy())
+            suffix = '.' + str(nupdown)
+            run_vasp(override, suffix)
+            energies.append(energy(suffix))
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
             nupdown_best = auto_nupdown[i]
