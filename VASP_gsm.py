@@ -14,6 +14,7 @@ def energy():
 
     :return:
     '''
+    from Classes_Pymatgen import Vasprun
     v = Vasprun('vasprun.xml', parse_dos=False, parse_eigen=False)
     return v.final_energy
 
