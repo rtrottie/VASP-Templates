@@ -28,6 +28,7 @@ def run_vasp(override=[], suffix=''):
     from Classes_Pymatgen import Incar
     from Classes_Custodian import StandardJob
     from custodian.custodian import Custodian
+    import os
 
     # Determine wheter to use Gamma optimized vasp
     incar = Incar.from_file('INCAR')
