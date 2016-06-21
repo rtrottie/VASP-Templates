@@ -26,6 +26,13 @@ def run_vasp(override=[], suffix=''):
     :return:
     '''
 
+    # Determine wheter to use Gamma optimized vasp
+    incar = Incar.from_file('INCAR')
+    if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
+        vasp = os.environ['VASP_GAMMA']
+    else:
+        vasp = os.environ['VASP_KPTS']
+
     handlers = []
     from Classes_Custodian import StandardJob
     vaspjob = [StandardJob([vasp, '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
@@ -41,14 +48,7 @@ try:
 except:
         pass
 
-# Determine wheter to use Gamma optimized vasp
 incar = Incar.from_file('INCAR')
-if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
-    vasp = os.environ['VASP_GAMMA']
-else:
-    vasp = os.environ['VASP_KPTS']
-
-
 # Check for NUPDOWN
 if os.path.exists('nupdown_info'):  # Determine if full check must be done or if just using past NUPDOWN
     with open('nupdown_info') as f:
