@@ -59,16 +59,16 @@ if os.path.exists('nupdown_info'):  # Determine if full check must be done or if
         nupdown_best = lines[0]  # optimal NUPDOWN is first line
         nupdown_iters = lines[1] # number of iterations with best nupdown
     if nupdown_iters < incar['AUTO_NUPDOWN_ITERS']:
-        nupdown_check = True
-    else:
         nupdown_check = False
+    else:
+        nupdown_check = True
 else:
     nupdown_check = True
 
-if 'AUTO_NUPDOWN' in incar and nupdown_check: # have a guess of nupdown
+if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
     override = [{"dict": "INCAR",  "action": {"_set": {"NUPDOWN": nupdown_best}}}]
     run_vasp(override)
-elif 'AUTO_NUPDOWN' in incar and not nupdown_check: # First run in new folder
+elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         energies = []
         for nupdown in incar['AUTO_NUPDOWN']:  # get energies for each desired NUPDOWN
             override = [{"dict": "INCAR",
