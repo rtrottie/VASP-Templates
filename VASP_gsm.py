@@ -64,8 +64,8 @@ incar = Incar.from_file('INCAR')
 if os.path.exists('nupdown_info'):  # Determine if full check must be done or if just using past NUPDOWN
     with open('nupdown_info') as f:
         lines = f.readlines()
-        nupdown_best = lines[0]  # optimal NUPDOWN is first line
-        nupdown_iters = lines[1] # number of iterations with best nupdown
+        nupdown_best = int(lines[0].strip())  # optimal NUPDOWN is first line
+        nupdown_iters = int(lines[1].strip()) # number of iterations with best nupdown
     if nupdown_iters < incar['AUTO_NUPDOWN_ITERS']:
         nupdown_check = False
     else:
@@ -90,7 +90,7 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
             nupdown_best = auto_nupdown[i]
-            f.writelines([str([nupdown_best]), '0'])
+            f.writelines([str(nupdown_best), '\n0'])
         suffix = '.' + str(nupdown_best)
         files = [f for f in os.listdir('.') if f.endswith(suffix)]
         for f in files:
