@@ -100,4 +100,3 @@ else:
     run_vasp()
 
 exitcode = 0
-sys.exit(0)
