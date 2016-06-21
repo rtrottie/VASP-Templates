@@ -83,7 +83,7 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
             nupdown_best = auto_nupdown[i]
-            f.writelines(str([nupdown_best]), '0')
+            f.writelines([str([nupdown_best]), '0'])
         suffix = '.' + str(nupdown_best)
         files = [f for f in os.listdir('.') if f.endswith(suffix)]
         for f in files:
