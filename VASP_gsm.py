@@ -99,4 +99,5 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
 else:
     run_vasp()
 
-
+exitcode = 0
+sys.exit(0)
