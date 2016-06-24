@@ -38,6 +38,8 @@ elif jobtype == 'Standard':
 
 def get_runs(max_steps=100):
     for i in xrange(max_steps):
+        if not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0:
+            raise Exception('empty POSCAR')
         incar = Incar.from_file('INCAR')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         stage_number = incar['STAGE_NUMBER']
