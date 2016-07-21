@@ -27,4 +27,6 @@ export VASP_PROCS={{ tasks }}
 
 ./gfstringq.exe 0 {{ tasks }} > scratch/paragsm0000
 
+find scratch/ -name POTCAR -execdir sh -c ' pwd ; chgsum.pl AECCAR0 AECCAR2  ; bader CHGCAR -ref CHGCAR_sum  ' \;
+
 exit 0
