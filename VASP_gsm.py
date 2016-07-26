@@ -85,7 +85,8 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
             override = [{"dict": "INCAR",
                          "action": {"_set": {"NUPDOWN": nupdown,
                                              'ISTART': 0,        # Don't use previously converged WAVECAR and CHGCAR
-                                             'ICHARG': 2}}}]
+                                             'ICHARG': 2,
+                                             'NELM'  : incar['NELM']*2}}}]
             suffix = '.' + str(nupdown)
             run_vasp(override, suffix)
             energies.append(energy(suffix))
