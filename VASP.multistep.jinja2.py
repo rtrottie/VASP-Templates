@@ -42,6 +42,7 @@ def get_runs(max_steps=100):
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
         incar = Incar.from_file('INCAR')
+        kpoints = Kpoints.from_file('KPOINTS')
         stages = Upgrade_Run.parse_incar_update('{{ CONVERGENCE }}')
         stage_number = incar['STAGE_NUMBER']
         if i == 0:
@@ -53,10 +54,13 @@ def get_runs(max_steps=100):
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
             settings += continuation
         if stage_number == len(stages) - 1:
-            final = True
+            if 'x'.join(map(str, kpoints.kpts[0])) == '1x1x1':
+                final = True
+            else:
+                final = False
         else:
             final = False
-        if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
+        if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
             vasp = vasp_gamma
         else:
             vasp = vasp_kpts
