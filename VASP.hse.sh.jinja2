@@ -1,0 +1,120 @@
+#!/bin/bash
+{% if queue_type == "slurm" %}#SBATCH -J {{ name }}
+#SBATCH --time={{ time }}:00:00
+#SBATCH -N {{ nodes }}
+#SBATCH --ntasks-per-node {{ ppn }}
+#SBATCH -o {{ name }}-%j.out
+#SBATCH -e {{ name }}-%j.err
+#SBATCH --qos {{ queue }}
+#SBATCH --mem={{ mem }}
+#SBATCH --account={{ account }}
+{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
+
+{% elif queue_type == "pbs" %}#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
+#PBS -l walltime={{ time }}:00:00
+#PBS -q {% if computer == "psiops" %}batch{% else %}{{ queue }}{% endif %}
+#PBS -N {{ name }}
+{% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
+cd $PBS_O_WORKDIR
+echo $PBS_O_WORKDIR
+{% endif %}
+
+
+# Set Environment
+
+source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
+
+
+python -c "
+
+from custodian.vasp.jobs import *
+from custodian.vasp.handlers import *
+from custodian.custodian import *
+from Classes_Custodian import *
+import Upgrade_Run
+import logging
+
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
+
+target = {{ target }}
+jobtype = '{{ jobtype }}'
+
+if jobtype == 'Standard':
+    handlers = [WalltimeHandler({{ time }}*60*60), UnconvergedErrorHandler()]
+    job = StandardJob
+else:
+    raise Exception('Must be STandard VASP run')
+
+
+pathway_vasprun = Vasprun('MEP.xml')
+cwd = os.path.abspath('.')
+settings = [
+    {'dict': 'INCAR',
+     'action': {'_set': {'NSW': 0,
+                         'IOPT' : 0,
+                         'IBRION' : -1},
+                }}
+]
+
+def get_energy(i):
+    folder = os.path.join(cwd, str(i).zfill(4))
+    if os.path.exists(folder):
+        try:
+            vasprun = Vasprun(os.path.join(folder), 'vasprun.xml')
+            if vasprun.converged:
+                return vasprun.final_energy
+        except:
+            pass
+    else:
+        os.mkdir(folder)
+        shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
+        shutil.copy('KPOINTS', os.path.join(folder, 'KPOINTS'))
+        shutil.copy('POTCAR', os.path.join(folder, 'POTCAR'))
+        closest = None
+        for dir in [dir for dir in os.listdir(cwd) if os.path.isdir(cwd, dir)]:
+            try:
+                if i == int(dir):
+                    pass
+                elif closest == None:
+                    closest = dir
+                elif abs(i - int(closest)) > (i - int(dir)):
+                    closest = dir
+            except:
+                pass
+        if closest:
+            shutil.copy(os.path.join(closest, 'WAVECAR'), os.path.join(folder, 'WAVECAR'))
+            shutil.copy(os.path.join(closest, 'CHGCAR'), os.path.join(folder, 'CHGCAR'))
+
+    os.chdir(folder)
+    Poscar(pathway_vasprun.structures[i]).write_file('POSCAR')
+    j = job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, final=True, settings_override=settings)
+    c = Custodian(handlers, j, max_errors=10)
+    c.run()
+    os.chdir(cwd)
+    return get_energy(i)
+
+def get_ts(low, mp, high, max_steps=100):
+    if mp == low or mp == high:
+        return np
+
+    q1 = (low+mp)/2
+    q3 = (high+mp)/2
+    mp_e = get_energy(mp)
+    q1_e = get_energy(q1)
+    q3_e = get_energy(q3)
+    if q3_e > mp_e and q3_e > q1_e:
+        return get_ts(mp, q3, high)
+    elif mp_e > q1_e and mp_e > q3_e:
+        return get_ts(q1, mp, q3)
+    elif q1_e > mp_e and q1_e > q3_e:
+        return get_ts(low, q1_e, mp)
+    else:
+        raise Exception('WHHHHYYY')
+
+
+
+print(get_ts(0, len(pathway_vasprun.structures)/2 , len(pathway_vasprun.structures)))
+"
