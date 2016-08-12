@@ -116,7 +116,7 @@ def get_ts(low, mp, high, max_steps=100):
     elif mp_e > q1_e and mp_e > q3_e:
         return get_ts(q1, mp, q3)
     elif q1_e > mp_e and q1_e > q3_e:
-        return get_ts(low, q1_e, mp)
+        return get_ts(low, q1, mp)
     else:
         raise Exception('WHHHHYYY')
 
