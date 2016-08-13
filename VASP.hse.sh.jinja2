@@ -91,7 +91,12 @@ def get_energy(i):
 
     os.chdir(folder)
     Poscar(pathway_vasprun.structures[i]).write_file('POSCAR')
-    j = job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, final=True, settings_override=settings)
+    incar = Incar.from_file('INCAR')
+    if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
+        vasp = '{{ vasp_gamma }}'
+    else:
+        vasp = '{{ vasp_kpts }}'
+    j = job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, final=True, settings_override=settings)
     c = Custodian(handlers, [j], max_errors=10)
     c.run()
     os.chdir(cwd)
