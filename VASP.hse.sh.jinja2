@@ -43,7 +43,7 @@ target = {{ target }}
 jobtype = '{{ jobtype }}'
 
 if jobtype == 'Standard':
-    handlers = [WalltimeHandler({{ time }}*60*60), UnconvergedErrorHandler()]
+    handlers = [WalltimeHandler({{ time }}*60*60)]
     job = StandardJob
 else:
     raise Exception('Must be STandard VASP run')
