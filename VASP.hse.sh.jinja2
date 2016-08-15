@@ -71,9 +71,6 @@ def get_energy(i):
             pass
     else:
         os.mkdir(folder)
-        shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
-        shutil.copy('KPOINTS', os.path.join(folder, 'KPOINTS'))
-        shutil.copy('POTCAR', os.path.join(folder, 'POTCAR'))
         closest = None
         for dir in [dir for dir in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, dir))]:
             try:
@@ -89,6 +86,9 @@ def get_energy(i):
             shutil.copy(os.path.join(closest, 'WAVECAR'), os.path.join(folder, 'WAVECAR'))
             shutil.copy(os.path.join(closest, 'CHGCAR'), os.path.join(folder, 'CHGCAR'))
 
+    shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
+    shutil.copy('KPOINTS', os.path.join(folder, 'KPOINTS'))
+    shutil.copy('POTCAR', os.path.join(folder, 'POTCAR'))
     os.chdir(folder)
     Poscar(pathway_vasprun.structures[i]).write_file('POSCAR')
     incar = Incar.from_file('INCAR')
