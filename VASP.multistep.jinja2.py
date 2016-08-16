@@ -24,14 +24,14 @@ if jobtype == 'NEB':
                              'action': {'_file_copy': {'dest': os.path.join(folder, 'POSCAR')}}})
 elif jobtype == 'Dimer':
     handlers = [WalltimeHandler({{ time }}*60*60, 15*60, electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60),
-                DimerDivergingHandler(), UnconvergedErrorHandler()]
+                DimerDivergingHandler()]
     job = DimerJob
     continuation = [{'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}},
                     {'file': 'NEWMODECAR',
                      'action' : {'_file_copy': {'dest': 'MODECAR'}}}]
 elif jobtype == 'Standard':
-    handlers = [WalltimeHandler({{ time }}*60*60, electronic_step_stop=True), UnconvergedErrorHandler()]
+    handlers = [WalltimeHandler({{ time }}*60*60, electronic_step_stop=True)]
     job = StandardJob
     continuation = [{'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}}]
