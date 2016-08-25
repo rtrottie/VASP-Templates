@@ -14,7 +14,7 @@ vasp_gamma =  '{{ vasp_gamma }}'
 
 
 if jobtype == 'NEB':
-    handlers = [WalltimeHandler({{ time }}*60*60, 15*60, electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60)]
+    handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60)]
     job = NEBJob
     images = Incar.from_file('INCAR')['IMAGES']
     continuation = []
@@ -23,7 +23,7 @@ if jobtype == 'NEB':
         continuation.append({'file': os.path.join(folder, 'CONTCAR'),
                              'action': {'_file_copy': {'dest': os.path.join(folder, 'POSCAR')}}})
 elif jobtype == 'Dimer':
-    handlers = [WalltimeHandler({{ time }}*60*60, 15*60, electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60),
+    handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60),
                 DimerDivergingHandler()]
     job = DimerJob
     continuation = [{'file': 'CONTCAR',
@@ -31,7 +31,7 @@ elif jobtype == 'Dimer':
                     {'file': 'NEWMODECAR',
                      'action' : {'_file_copy': {'dest': 'MODECAR'}}}]
 elif jobtype == 'Standard':
-    handlers = [WalltimeHandler({{ time }}*60*60, electronic_step_stop=True)]
+    handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
     job = StandardJob
     continuation = [{'file': 'CONTCAR',
                      'action': {'_file_copy': {'dest': 'POSCAR'}}}]
