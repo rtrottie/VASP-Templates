@@ -38,7 +38,7 @@ elif jobtype == 'Standard':
 
 
 def get_runs(max_steps=100):
-    for i in xrange(max_steps):
+    for i in range(max_steps):
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
         incar = Incar.from_file('INCAR')
