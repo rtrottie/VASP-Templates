@@ -52,7 +52,7 @@ else:
 def get_runs(max_steps=40):
     energy_1 = 0
     energy_2 = 0
-    for i in xrange(max_steps):
+    for i in range(max_steps):
         vinput = VaspInput.from_directory('.')
         encut = vinput['INCAR']['ENCUT']
         if i == 0:
