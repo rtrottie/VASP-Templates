@@ -105,6 +105,7 @@ def get_energy(i):
 def get_ts(low, mp, high, max_steps=100):
     logging.info('Finding Max from locations : {} {} {}'.format(low, mp, high))
     if mp == low or mp == high:
+        logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return np
 
     q1 = (low+mp)/2
