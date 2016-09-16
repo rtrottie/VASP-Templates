@@ -108,8 +108,8 @@ def get_ts(low, mp, high, max_steps=100):
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return np
 
-    q1 = (low+mp)/2
-    q3 = (high+mp)/2
+    q1 = int((low+mp)/2)
+    q3 = int((high+mp)/2)
     logging.info('Converging Midpoint')
     mp_e = get_energy(mp)
     logging.info('Converging Q1')
@@ -129,5 +129,5 @@ def get_ts(low, mp, high, max_steps=100):
 
 
 
-print(get_ts(0, len(pathway_vasprun.structures)/2 , len(pathway_vasprun.structures)-1))
+print(get_ts(0, int(len(pathway_vasprun.structures)/2) , len(pathway_vasprun.structures)-1))
 "
