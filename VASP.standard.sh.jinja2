@@ -50,7 +50,7 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60),
             DimerDivergingHandler(), DimerCheckMins()]
 
-{% elif jobtype == "Standard" %}
+{% elif jobtype == "Standard" or jobtype%}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
 {% endif %}
 
