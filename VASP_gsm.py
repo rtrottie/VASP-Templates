@@ -100,7 +100,6 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
             shutil.copy(f, f[:-len(suffix)])
 
 else:
-    subprocess.Popen(['mpirun', '-np', os.environ['VASP_PROCS'], os.environ['VASP_KPTS']])
-    # run_vasp()
+    run_vasp()
 
 exitcode = 0
