@@ -52,7 +52,7 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
             DimerDivergingHandler(), DimerCheckMins()]
 vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
-{% elif jobtype == "Standard-Halting"}
+{% elif jobtype == "Standard-Halting" %}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler('{{ logname }}', 300),
             MaxForceErrorHandler(max_force_threshold=0.005)]
