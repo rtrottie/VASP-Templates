@@ -34,6 +34,8 @@ from custodian.vasp.handlers import *
 from custodian.custodian import *
 from Classes_Custodian import *
 
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
 incar = Incar.from_file('INCAR')
 
 if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
