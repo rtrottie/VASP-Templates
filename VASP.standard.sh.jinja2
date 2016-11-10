@@ -65,8 +65,7 @@ def jobs(max_steps=2000):
             pass
         yield DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
-            FrozenJobErrorHandler_dimer('{{ logname }}', 300),
-            MaxForceErrorHandler_dimer(max_force_threshold=0.005)]
+            FrozenJobErrorHandler_dimer('{{ logname }}', 300)]
 vaspjob = jobs()
 
 {% elif jobtype == "Standard-Halting" %}
@@ -83,8 +82,7 @@ def jobs(max_steps=2000):
             pass
         yield StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
-            FrozenJobErrorHandler_cont('{{ logname }}', 300),
-            MaxForceErrorHandler(max_force_threshold=0.005)]
+            FrozenJobErrorHandler_cont('{{ logname }}', 300)]
 vaspjob = jobs()
 
 {% elif jobtype == "Standard" or jobtype%}
