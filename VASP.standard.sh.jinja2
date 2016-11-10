@@ -54,10 +54,13 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer-Halting" %}
-def jobs():
+def jobs(max_steps=200):
     incar = Incar.from_file('INCAR')
-    vasprun = Vasprun('vasprun.xml')
-    if not vasprun.converged_ionic:
+    for i in range(max_steps):
+        try:
+            v = Vasprun('vasprun.xml')
+            if i > 0 and v.converged_ionic:
+                break
         yield DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_dimer('{{ logname }}', 300),
@@ -66,10 +69,14 @@ vaspjob = jobs()
 
 {% elif jobtype == "Standard-Halting" %}
 
-def jobs():
+
+def jobs(max_steps=200):
     incar = Incar.from_file('INCAR')
-    vasprun = Vasprun('vasprun.xml')
-    if not vasprun.converged_ionic:
+    for i in range(max_steps):
+        try:
+            v = Vasprun('vasprun.xml')
+            if i > 0 and v.converged_ionic:
+                break
         yield StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_cont('{{ logname }}', 300),
