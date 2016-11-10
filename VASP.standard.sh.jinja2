@@ -94,5 +94,5 @@ vaspjob = [StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}
 {% endif %}
 
 
-c = Custodian(handlers, vaspjob, max_errors=10)
+c = Custodian(handlers, vaspjob, max_errors=200)
 c.run()"
