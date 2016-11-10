@@ -33,6 +33,7 @@ from custodian.vasp.jobs import *
 from custodian.vasp.handlers import *
 from custodian.custodian import *
 from Classes_Custodian import *
+from Classes_Pymatgen import *
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
@@ -53,16 +54,27 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer-Halting" %}
+def jobs():
+    incar = Incar.from_file('INCAR')
+    vasprun = Vasprun('vasprun.xml')
+    if not vasprun.converged_ionic:
+        yield DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_dimer('{{ logname }}', 300),
             MaxForceErrorHandler_dimer(max_force_threshold=0.005)]
-vaspjob = [StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = jobs()
 
 {% elif jobtype == "Standard-Halting" %}
+
+def jobs():
+    incar = Incar.from_file('INCAR')
+    vasprun = Vasprun('vasprun.xml')
+    if not vasprun.converged_ionic:
+        yield StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_cont('{{ logname }}', 300),
             MaxForceErrorHandler(max_force_threshold=0.005)]
-vaspjob = [StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = jobs()]
 
 {% elif jobtype == "Standard" or jobtype%}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
