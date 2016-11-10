@@ -74,7 +74,7 @@ def jobs():
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_cont('{{ logname }}', 300),
             MaxForceErrorHandler(max_force_threshold=0.005)]
-vaspjob = jobs()]
+vaspjob = jobs()
 
 {% elif jobtype == "Standard" or jobtype%}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
