@@ -63,6 +63,8 @@ def jobs(max_steps=2000):
                 break
         except:
             pass
+        if os.path.getsize('CENTCAR') > 0:
+            shutil.copy('CENTCAR', 'POSCAR')
         yield DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_dimer('{{ logname }}', 300)]
@@ -80,6 +82,8 @@ def jobs(max_steps=2000):
                 break
         except:
             pass
+        if os.path.getsize('CONTCAR') > 0:
+            shutil.copy('CONTCAR', 'POSCAR')
         yield StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             FrozenJobErrorHandler_cont('{{ logname }}', 300)]
