@@ -65,7 +65,7 @@ def jobs(max_steps=2000):
             pass
         if os.path.getsize('CENTCAR') > 0:
             shutil.copy('CENTCAR', 'POSCAR')
-        if os.path.getsize('NEWMODECAR') > 0:
+        if os.path.getsize('NEWMODECAR') > 1:
             shutil.copy('NEWMODECAR', 'MODECAR')
         yield DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
