@@ -58,7 +58,7 @@ def fix_incar(incar: Incar):
     return incar
 
 
-incar = fix_incar(Incar.from_file('INCAR'))
-incar.write_file('INCAR')
+# incar = fix_incar(Incar.from_file('INCAR'))
+# incar.write_file('INCAR')
 run_vasp()
 exitcode = 0
