@@ -42,7 +42,7 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_KPTS']
 
     handlers = [WalltimeHandler()]
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
+    vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
