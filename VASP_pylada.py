@@ -47,11 +47,11 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_KPTS']
     handlers = [NonConvergingErrorHandler(nionic_steps=20, change_algo=True), PositiveEnergyErrorHandler()]
     if 'PBS_START_TIME' in sys.argv:
-        start_time = os.argv['PBS_START_TIME']
+        start_time = int(os.environ['PBS_START_TIME'])
         current_time = calendar.timegm(time.gmtime())
         elapsed_time = current_time - start_time
-        walltime = 172800 - elapsed_time
-        handlers += [WalltimeHandler(wall_time=walltime, electronic_step_stop=True)]
+        walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
+        handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(30*60, walltime*60*60/20), electronic_step_stop=True,)]
     vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
