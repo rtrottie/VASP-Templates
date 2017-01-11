@@ -41,7 +41,7 @@ else:
 vaspjob = [{{ jobtype }}Job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% if jobtype == "NEB" %}
-handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60)]
+handlers = [WalltimeHandler({{ time }}*60*60, 15*60)]
 
 {% elif jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ time }}*60*60, 15*60), NEBNotTerminating('{{ logname }}', 180*60),
