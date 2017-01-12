@@ -45,11 +45,11 @@ else:
     vasp = '{{ vasp_kpts }}'
 
 {% if jobtype == "NEB" %}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60)]
+handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
 vaspjob = [NEBJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer" %}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NEBNotTerminating('{{ logname }}', 180*60),
+handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             DimerDivergingHandler(), DimerCheckMins()]
 vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
