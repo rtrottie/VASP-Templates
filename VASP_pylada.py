@@ -51,6 +51,7 @@ def run_vasp(override=[], suffix=''):
         current_time = calendar.timegm(time.gmtime())
         elapsed_time = current_time - start_time
         walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
+        logging.info('Walltime : {}'.format(walltime))
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(30*60, walltime*60*60/20), electronic_step_stop=True,)]
     vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
