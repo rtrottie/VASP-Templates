@@ -8,12 +8,7 @@ from custodian.custodian import *
 from Classes_Pymatgen import *
 from Classes_Custodian import StandardJob
 
-def is_int(s):
-    try:
-        int(s)
-        return True
-    except:
-        return False
+
 
 def energy(suffix=''):
     '''
@@ -72,6 +67,13 @@ if os.path.exists('nupdown_info'):  # Determine if full check must be done or if
         nupdown_check = True
 else:
     nupdown_check = True
+
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except:
+        return False
 
 if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
     override = [{"dict": "INCAR",  "action": {"_set": {"NUPDOWN": nupdown_best}}}]
