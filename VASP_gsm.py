@@ -92,16 +92,16 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
                                              'ICHARG': 2,
                                              'NELM'  : incar['NELM']*2}}}]
             suffix = '.' + str(nupdown)
-            run_vasp(override, suffix)
-            energies.append(energy(suffix))
+            run_vasp(override, '.' + str(nupdown_best))
+            energies.append(energy('.' + str(nupdown_best)))
         with open('nupdown_info', 'w') as f: # store info for later use
             i = np.argmin(energies) # get index minima
             nupdown_best = auto_nupdown[i]
             f.writelines([str(nupdown_best), '\n0'])
         suffix = '.' + str(nupdown_best)
-        files = [f for f in os.listdir('.') if f.endswith(suffix)]
+        files = [f for f in os.listdir('.') if f.endswith('.' + str(nupdown_best))]
         for f in files:
-            shutil.copy(f, f[:-len(suffix)])
+            shutil.copy(f, f[:-len('.' + str(nupdown_best))])
 
 else:
     run_vasp()
