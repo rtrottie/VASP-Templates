@@ -84,7 +84,7 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
                 return True
             except:
                 return False
-        auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split() if is_int(x)]
+        auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split()[1:]]
         for nupdown in auto_nupdown:  # get energies for each desired NUPDOWN
             override = [{"dict": "INCAR",
                          "action": {"_set": {"NUPDOWN": nupdown,
