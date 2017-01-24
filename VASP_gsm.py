@@ -68,12 +68,6 @@ if os.path.exists('nupdown_info'):  # Determine if full check must be done or if
 else:
     nupdown_check = True
 
-def is_int(s):
-    try:
-        int(s)
-        return True
-    except:
-        return False
 
 
 if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
@@ -83,6 +77,13 @@ if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
         f.writelines([str(nupdown_best), '\n', str(nupdown_iters+1)])
 elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
         energies = []
+
+        def is_int(s):
+            try:
+                int(s)
+                return True
+            except:
+                return False
         auto_nupdown = [ int(x) for x in incar['AUTO_NUPDOWN'].split() if is_int(x)]
         for nupdown in auto_nupdown:  # get energies for each desired NUPDOWN
             override = [{"dict": "INCAR",
