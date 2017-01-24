@@ -75,6 +75,7 @@ def is_int(s):
     except:
         return False
 
+
 if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
     override = [{"dict": "INCAR",  "action": {"_set": {"NUPDOWN": nupdown_best}}}]
     run_vasp(override)
