@@ -61,17 +61,20 @@ def run_vasp(override=[], suffix=''):
     c.run()
 
 def fix_incar(incar: Incar):
-    fix_bad_good = [ ( 'LDUU', 'LDAUU' ),
-                     ( 'LDUL', 'LDAUL' ),
-                     ( 'LDUJ', 'LDAUJ' )]
-    for bad, good in fix_bad_good:
-        if bad in incar:
-            incar[good] = incar[bad]
-            del incar[bad]
+    # fix_bad_good = [ ( 'LDUU', 'LDAUU' ),
+    #                  ( 'LDUL', 'LDAUL' ),
+    #                  ( 'LDUJ', 'LDAUJ' )]
+    # for bad, good in fix_bad_good:
+    #     if bad in incar:
+    #         incar[good] = incar[bad]
+    #         del incar[bad]
+    if 'GGA' in incar and 'P' == incar['GGA'][0] and 'S' in incar['GGA'][1]:
+        incar['GGA']='PS'
+
     return incar
 
 
-# incar = fix_incar(Incar.from_file('INCAR'))
-# incar.write_file('INCAR')
+incar = fix_incar(Incar.from_file('INCAR'))
+incar.write_file('INCAR')
 run_vasp()
 exitcode = 0
