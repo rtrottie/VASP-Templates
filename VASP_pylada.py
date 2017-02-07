@@ -68,7 +68,7 @@ def fix_incar(incar: Incar):
     #     if bad in incar:
     #         incar[good] = incar[bad]
     #         del incar[bad]
-    if 'GGA' in incar and 'P' in incar['GGA'] and 'S' in incar['GGA']:
+    if 'GGA' in incar and 'P' in incar['GGA'] and 's' in incar['GGA']:
         incar['GGA']='PS'
 
     return incar
