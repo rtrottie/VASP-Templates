@@ -8,7 +8,7 @@
 #SBATCH --qos {{ queue }}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
-{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}{% if computer == "summit"%}#SBATCH --switches=1 {% endif %}
+{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
 
 {% elif queue_type == "pbs" %}#PBS -j eo
 #PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
