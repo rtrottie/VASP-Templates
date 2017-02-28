@@ -7,11 +7,24 @@ import numpy as np
 from custodian.custodian import *
 from Classes_Pymatgen import *
 from Classes_Custodian import StandardJob, NEBJob
+import shutil
 import calendar
 import time
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
+
+class NEBJobSinglePylada(NEBJob):
+    def postprocess(self):
+        src = '01'
+        for item in os.listdir(src):
+            s = os.path.join(src, item)
+            d = os.path.join(item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d)
+            else:
+                shutil.copy2(s, d)
+        return super().postprocess()
 
 def is_int(s):
     try:
@@ -54,7 +67,7 @@ def run_vasp(override=[], suffix=''):
         logging.info('Walltime : {}'.format(walltime))
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(45*60, walltime*60*60/20), electronic_step_stop=True,)]
     if ('IMAGES' in incar and 'ICHAIN' in incar) and (incar['IMAGES'] == 1 and incar['ICHAIN'] == 0):
-        vaspjob = [NEBJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+        vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
     else:
         vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
