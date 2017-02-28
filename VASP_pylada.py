@@ -6,7 +6,7 @@ from custodian.vasp.handlers import *
 import numpy as np
 from custodian.custodian import *
 from Classes_Pymatgen import *
-from Classes_Custodian import StandardJob
+from Classes_Custodian import StandardJob, NEBJob
 import calendar
 import time
 
@@ -53,8 +53,12 @@ def run_vasp(override=[], suffix=''):
         walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
         logging.info('Walltime : {}'.format(walltime))
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(45*60, walltime*60*60/20), electronic_step_stop=True,)]
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+    if ('IMAGES' in incar and 'ICHAIN' in incar) and (incar['IMAGES'] == 1 and incar['ICHAIN'] == 0):
+        vaspjob = [NEBJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
+    else:
+        vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     if 'STOPCAR' in os.listdir():
         os.remove('STOPCAR')
