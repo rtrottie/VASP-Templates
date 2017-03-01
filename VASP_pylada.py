@@ -10,6 +10,7 @@ from Classes_Custodian import StandardJob, NEBJob
 import shutil
 import calendar
 import time
+from math import floor,ceil
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
@@ -67,6 +68,22 @@ def run_vasp(override=[], suffix=''):
         logging.info('Walltime : {}'.format(walltime))
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(45*60, walltime*60*60/20), electronic_step_stop=True,)]
     if ('IMAGES' in incar and 'ICHAIN' in incar) and (incar['IMAGES'] == 1 and incar['ICHAIN'] == 0):
+        if 'POSCAR' in os.listdir():
+            inital_images =  ceil((incar['IMAGES'] - 1) / 2) + 1
+            final_images  = floor((incar['IMAGES'] - 1) / 2) + 1
+            initial = Poscar.from_file('00/POSCAR').structure # type: Structure
+            ts = Poscar.from_file('POSCAR') # type: Structure
+            final = Poscar.from_file(str(incar['IMAGES']+1).zfill(2), 'POSCAR') # type: Structure
+            # TODO: Don't force interpolation
+            images = initial.interpolate(ts, inital_images, autosort_tol=0.75)[:-1] # get images up to, but not including, the TS
+            images += ts.interpolate(final, final_images, autosort_tol=0.75) # get images from TS
+            image_i = 0
+            for image in images: # type: Structure
+                image_dir = os.path.join(str(image_i).zfill(2))
+                os.makedirs(image_dir, exist_ok=True)
+                image.to(fmt='poscar', filename=os.path.join(image_dir, 'POSCAR'))
+                image_i = image_i + 1
+
         vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
     else:
