@@ -26,7 +26,7 @@ source ~/.bashrc_vasp
 export OMP_NUM_THREADS={{ openmp }}
 export VASP_PROCS={{ tasks }}
 
-./gfstringq.exe 0 {{ tasks }} > scratch/paragsm0000
+$GSM_DIR/gfstringq.exe 0 {{ tasks }} > scratch/paragsm0000
 
 find scratch/ -name POTCAR -execdir sh -c ' pwd ; chgsum.pl AECCAR0 AECCAR2  ; bader CHGCAR -ref CHGCAR_sum  ' \;
 
