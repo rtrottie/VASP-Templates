@@ -50,7 +50,6 @@ else
    echo "prepending lines to input file"
    echo "%RWF=$SCRATCH2/,$MEMSIZE,$SCRATCH/,-1" > infile
    echo "%NoSave" >> infile
-   echo "%Chk=test.chk"  >> infile
    echo " "  >> infile
    cat $INPUT_FILE >> infile
 fi
