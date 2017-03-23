@@ -22,6 +22,7 @@ then
    echo "PBS workdir set, so cd'ing --> $PBS_O_WORKDIR"
    cd $PBS_O_WORKDIR
 fi
+{% endif %}
 
 # Load Gaussian module to set environment
 module purge
