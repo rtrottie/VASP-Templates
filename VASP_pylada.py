@@ -66,7 +66,10 @@ def run_vasp(override=[], suffix=''):
         elapsed_time = current_time - start_time
         walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
         logging.info('Walltime : {}'.format(walltime))
-        handlers += [WalltimeHandler(wall_time=walltime, buffer_time=min(45*60, walltime*60*60/20), electronic_step_stop=True,)]
+        buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
+        if buffer_time*4 > walltime:
+            raise Exception('Not Enough Time')
+        handlers += [WalltimeHandler(wall_time=walltime, buffer_time=buffer_time, electronic_step_stop=True,)]
     if ('IMAGES' in incar and 'ICHAIN' in incar) and (incar['IMAGES'] == 1 and incar['ICHAIN'] == 0):
         if 'POSCAR' in os.listdir():
             inital_images =  ceil((incar['IMAGES'] - 1) / 2) + 1
