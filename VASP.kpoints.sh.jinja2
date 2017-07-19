@@ -50,6 +50,7 @@ else:
 
 def get_runs(max_steps=20, mode='not'):
     energy = 0
+    energy2
     vinput = VaspInput.from_directory('.')
     kpoints = vinput['KPOINTS'].kpts[0]
     for i in range(max_steps):
@@ -66,10 +67,12 @@ def get_runs(max_steps=20, mode='not'):
             e_per_atom = v.final_energy / len(v.final_structure)
             logging.info('x'.join(map(lambda k : str(k-1), m)) + ' completed with ' + str(e_per_atom) + ' eV/atom')
             ediff = abs(e_per_atom - energy)
-            if ediff < target:
+            ediff2 = abs(e_per_atom - energy2)
+            if ediff < target and ediff2 < target:
                 logging.info('Converged to {} eV/atom!'.format(ediff))
                 break
             else:
+                energy2 = e_per_atom
                 energy = e_per_atom
                 settings = [
                     {'dict': 'KPOINTS',
