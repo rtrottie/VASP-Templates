@@ -69,7 +69,7 @@ def get_runs(max_steps=20, mode='not'):
             ediff = abs(e_per_atom - energy)
             ediff2 = abs(e_per_atom - energy2)
             if ediff < target and ediff2 < target:
-                logging.info('Converged to {} eV/atom!'.format(ediff))
+                logging.info('Converged to ' + str(ediff) + ' and ' + str(ediff2) + ' eV/atom!')
                 break
             else:
                 energy2 = e_per_atom
