@@ -50,7 +50,7 @@ else:
 
 def get_runs(max_steps=20, mode='not'):
     energy = 0
-    energy2
+    energy2 = 0
     vinput = VaspInput.from_directory('.')
     kpoints = vinput['KPOINTS'].kpts[0]
     for i in range(max_steps):
