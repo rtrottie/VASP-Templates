@@ -78,7 +78,7 @@ def get_runs(max_steps=40):
                      'action': {'_set': {'ENCUT' : encut }}}
                 ]
 
-        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings, suffix='.' + str(encut), final=False)
+        yield job(['{{ mpi }}', '-np', '{{ tasks }}', '{{ vasp_kpts }}'], '{{ logname }}', auto_npar=False, settings_override=settings, suffix='.encut.' + str(encut), final=False)
 
 
 c = Custodian(handlers, get_runs(), max_errors=10)
