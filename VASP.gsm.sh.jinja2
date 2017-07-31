@@ -16,6 +16,8 @@
 #PBS -q {{ queue }}
 #PBS -N {{ name }}
 {% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
+cd $PBS_O_WORKDIR
+echo $PBS_O_WORKDIR
 {% endif %}
 
 
