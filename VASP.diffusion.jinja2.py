@@ -25,7 +25,7 @@ def get_runs(max_steps=1000):
                         {'file': os.path.join('01', 'CONTCAR'),
                             'action': {'_file_copy': {'dest': os.path.join('01', 'POSCAR')}}},
                         {'file': os.path.join('01', 'OUTCAR'),
-                            'action': {'_file_copy': {'dest': os.path.join('01', 'OUTCAR'.format(i.zfill(3)))}}},
+                            'action': {'_file_copy': {'dest': os.path.join('01', 'OUTCAR'.format(str(i).zfill(3)))}}},
                        ]
         nsteps = nsteps + 1
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
