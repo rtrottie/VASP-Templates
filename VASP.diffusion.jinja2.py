@@ -40,7 +40,8 @@ def get_runs(max_steps=1000):
             vasp = vasp_gamma
         else:
             vasp = vasp_kpts
-        yield DiffusionJob(incar['DIFFATOM'], [incar['CONSATOM1'], incar['CONSATOM2'], incar['CONSATOM3']], nsteps=nsteps, vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', vasp], output_file='{{ logname }}', auto_npar=False, final=final)
+        yield DiffusionJob(incar['DIFFATOM'], [incar['CONSATOM1'], incar['CONSATOM2'], incar['CONSATOM3']], nsteps=nsteps,
+                           vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', vasp], output_file='{{ logname }}', auto_npar=False, final=final, settings_override=continuation)
         nsteps = nsteps + 1
 
 c = Custodian(handlers, get_runs(), max_errors=10)
