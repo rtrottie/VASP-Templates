@@ -12,7 +12,7 @@ logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
 jobtype = '{{ jobtype }}'
 vasp_kpts = '{{ vasp_kpts }}'
 vasp_gamma =  '{{ vasp_gamma }}'
-nsteps = 10
+nsteps = 9
 
 
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
@@ -23,6 +23,7 @@ continuation.append({'file': os.path.join('01', 'CONTCAR'),
 
 def get_runs(max_steps=1000):
     for i in range(max_steps):
+        nsteps = nsteps + 1
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
         incar = Incar.from_file('INCAR')
@@ -40,9 +41,8 @@ def get_runs(max_steps=1000):
             vasp = vasp_gamma
         else:
             vasp = vasp_kpts
-        yield DiffusionJob(incar['DIFFATOM'], [incar['CONSATOM1'], incar['CONSATOM2'], incar['CONSATOM3']], nsteps=nsteps,
+        yield DiffusionJob(incar['DIFFATOM'], [incar['CONSATOM1'], incar['CONSATOM2'], incar['CONSATOM3']], nsteps,
                            vasp_cmd=['{{ mpi }}', '-np', '{{ tasks }}', vasp], output_file='{{ logname }}', auto_npar=False, final=final, settings_override=continuation)
-        nsteps = nsteps + 1
 
 c = Custodian(handlers, get_runs(), max_errors=10)
 c.run()
