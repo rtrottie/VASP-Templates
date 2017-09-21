@@ -21,7 +21,7 @@ continuation.append({'file': os.path.join('01', 'CONTCAR'),
 
 
 def get_runs(max_steps=1000):
-    nsteps = 9
+    nsteps = 1
     for i in range(max_steps):
         nsteps = nsteps + 1
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
