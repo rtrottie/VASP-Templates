@@ -27,7 +27,7 @@ def get_runs(max_steps=1000):
             raise Exception('empty CONTCAR')
         incar = Incar.from_file('INCAR')
         try:
-            nebef = subprocess.Popen('nebef.pl', stdout=subprocess.PIPE)
+            nebef = subprocess.Popen('nebef.pl', stdout=subprocess.PIPE )
             force = float(nebef.stdout.readlines()[0].split()[1])
             logging.info('Force:  {}'.format(force))
             if force < -incar['EDIFFG']:
