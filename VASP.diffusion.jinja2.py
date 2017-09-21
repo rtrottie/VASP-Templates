@@ -15,14 +15,16 @@ vasp_gamma =  '{{ vasp_gamma }}'
 
 
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
-continuation = []
-continuation.append({'file': os.path.join('01', 'CONTCAR'),
-                     'action': {'_file_copy': {'dest': os.path.join('POSCAR')}}})
 
 
 def get_runs(max_steps=1000):
     nsteps = 1
     for i in range(max_steps):
+        continuation = [{'file': os.path.join('01', 'CONTCAR'),
+                            'action': {'_file_copy': {'dest': os.path.join('POSCAR')}}},
+                        {'file': os.path.join('01', 'OUTCAR'),
+                            'action': {'_file_copy': {'dest': os.path.join('01', 'OUTCAR'.format(i.zfill(3)))}}},
+                       ]
         nsteps = nsteps + 1
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
