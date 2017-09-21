@@ -22,6 +22,8 @@ def get_runs(max_steps=1000):
     for i in range(max_steps):
         continuation = [{'file': os.path.join('01', 'CONTCAR'),
                             'action': {'_file_copy': {'dest': os.path.join('POSCAR')}}},
+                        {'file': os.path.join('01', 'CONTCAR'),
+                            'action': {'_file_copy': {'dest': os.path.join('01', 'POSCAR')}}},
                         {'file': os.path.join('01', 'OUTCAR'),
                             'action': {'_file_copy': {'dest': os.path.join('01', 'OUTCAR'.format(i.zfill(3)))}}},
                        ]
@@ -32,7 +34,9 @@ def get_runs(max_steps=1000):
         try:
             nebef = subprocess.Popen('nebef.pl', stdout=subprocess.PIPE)
             force = float(nebef.stdout.readlines()[0].split()[1])
-            logging.info('Force:  {}'.format(force))
+            o = Outcar('01/OUTCAR')
+            o.read_neb()
+            logging.info('Force :  {}\nEnergy:  {}'.format(force, o.data['energy']))
             if force < -incar['EDIFFG']:
                 final = True
             else:
