@@ -20,13 +20,17 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 def get_runs(max_steps=1000):
     nsteps = 1
     for i in range(max_steps):
-        continuation = [{'file': os.path.join('01', 'CONTCAR'),
-                            'action': {'_file_copy': {'dest': os.path.join('POSCAR')}}},
-                        {'file': os.path.join('01', 'CONTCAR'),
-                            'action': {'_file_copy': {'dest': os.path.join('01', 'POSCAR')}}},
-                        {'file': os.path.join('01', 'OUTCAR'),
-                            'action': {'_file_copy': {'dest': os.path.join('01', 'OUTCAR{}'.format(str(i).zfill(3)))}}},
-                       ]
+        if i > 0:
+            continuation = [{'file': os.path.join('01', 'CONTCAR'),
+                             'action': {'_file_copy': {'dest': os.path.join('POSCAR')}}},
+                            {'file': os.path.join('01', 'CONTCAR'),
+                             'action': {'_file_copy': {'dest': os.path.join('01', 'POSCAR')}}},
+                            {'file': os.path.join('01', 'OUTCAR'),
+                             'action': {
+                                 '_file_copy': {'dest': os.path.join('01', 'OUTCAR{}'.format(str(i).zfill(3)))}}},
+                            ]
+        else:
+            continuation = []
         nsteps = nsteps + 1
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
@@ -41,6 +45,7 @@ def get_runs(max_steps=1000):
                 final = True
             else:
                 final = False
+
         except:
             final = False
         if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
