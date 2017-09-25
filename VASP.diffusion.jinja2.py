@@ -27,7 +27,10 @@ def get_runs(max_steps=1000):
                              'action': {'_file_copy': {'dest': os.path.join('01', 'POSCAR')}}},
                             {'file': os.path.join('01', 'OUTCAR'),
                              'action': {
-                                 '_file_copy': {'dest': os.path.join('01', 'OUTCAR{}'.format(str(i).zfill(3)))}}},
+                                 '_file_copy': {'dest': os.path.join('01', 'OUTCAR.{}'.format(str(i).zfill(3)))}}},
+                            {'file': os.path.join('01', 'CONTCAR'),
+                             'action': {
+                                 '_file_copy': {'dest': os.path.join('01', 'CONTCAR.{}'.format(str(i).zfill(3)))}}},
                             ]
         else:
             continuation = []
