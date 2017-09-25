@@ -18,7 +18,7 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 
 
 def get_runs(max_steps=1000):
-    nsteps = 1
+    nsteps = 20
     for i in range(max_steps):
         if i > 0:
             continuation = [{'file': os.path.join('01', 'CONTCAR'),
@@ -34,7 +34,7 @@ def get_runs(max_steps=1000):
                             ]
         else:
             continuation = []
-        nsteps = nsteps + 1
+        nsteps = nsteps + 5
         if i > 0 and ((not os.path.exists('CONTCAR') or os.path.getsize('CONTCAR') == 0) and (not os.path.exists('01/CONTCAR') or os.path.getsize('01/CONTCAR') == 0)):
             raise Exception('empty CONTCAR')
         incar = Incar.from_file('INCAR')
