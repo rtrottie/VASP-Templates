@@ -24,6 +24,7 @@ echo $PBS_O_WORKDIR
 # Set Environment
 
 source ~/.bashrc_vasp
+VASP_COMMAND=$VASP_GSM_COMMAND
 
 export OMP_NUM_THREADS={{ openmp }}
 export VASP_PROCS={{ tasks }}
