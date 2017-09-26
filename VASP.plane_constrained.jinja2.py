@@ -1,4 +1,11 @@
 {% extends "VASP.base.jinja2.sh" %}
+
+{% block environment %}
+source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
+export VASP_PROCS={{ tasks }}
+{% endblock environment %}
+
 {% block python %}
 from custodian.custodian import *
 from Classes_Custodian import *
@@ -79,6 +86,10 @@ class InvertPlane:
 atoms = read('POSCAR')
 atoms.set_calculator(Vasp())
 i = Incar.from_file('INCAR')
+i['NSW'] = 0
+i['IBRION'] = -1
+if 'IOPT' in i:
+    del i['IOPT']
 c = InPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
@@ -95,6 +106,4 @@ c = InvertPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 dyn = FIRE(atoms)
 dyn.run(fmax=i['EDIFFG']*-1)
-
-
 {% endblock python %}
