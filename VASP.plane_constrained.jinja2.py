@@ -31,7 +31,7 @@ class InPlane:
         p1 = newpositions[self.plane_i[0]] # type: np.array
         p2 = newpositions[self.plane_i[1]] # type: np.array
         p3 = newpositions[self.plane_i[2]] # type: np.array
-        v1 = p2 - p1
+        v1 = p2 -  p1
         v2 = p3 - p1
 
         # Get equation of plane ax+by+cz+d = 0
