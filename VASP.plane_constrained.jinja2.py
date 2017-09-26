@@ -90,6 +90,7 @@ i['NSW'] = 0
 i['IBRION'] = -1
 if 'IOPT' in i:
     del i['IOPT']
+i.write_file('INCAR')
 c = InPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
