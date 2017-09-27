@@ -7,15 +7,8 @@ export VASP_PROCS={{ tasks }}
 {% endblock environment %}
 
 {% block python %}
-from custodian.custodian import *
-from Classes_Custodian import *
-import Upgrade_Run
-import logging
-import copy
-import subprocess
-
 from Classes_ASE import StandardVasp as Vasp
-from Classes_ASE import InvertPlane, InPlane
+from Classes_ASE import InvertPlane, InPlane, HookeanPlane
 from Classes_Pymatgen import Incar
 from ase.io import read
 from ase.optimize.precon import PreconFIRE as FIRE
@@ -28,7 +21,7 @@ i['IBRION'] = -1
 if 'IOPT' in i:
     del i['IOPT']
 i.write_file('INCAR')
-c = InPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
+c = HookeanPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
 dyn = FIRE(atoms)
