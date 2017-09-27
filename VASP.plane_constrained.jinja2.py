@@ -25,7 +25,7 @@ c = HookeanPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3'])
 atoms.set_constraint(c)
 
 dyn = FIRE(atoms)
-dyn.run(fmax=i['EDIFFG']*-2)
+dyn.run(fmax=i['EDIFFG']*-2, trajectory='run.traj', restart='history.pckl')
 
 import os
 os.makedirs('improved_ts', exist_ok=True)
