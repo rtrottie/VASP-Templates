@@ -24,8 +24,8 @@ i.write_file('INCAR')
 c = HookeanPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
-dyn = FIRE(atoms)
-dyn.run(fmax=i['EDIFFG']*-2, trajectory='run.traj', restart='history.pckl')
+dyn = FIRE(atoms, trajectory='run.traj', restart='history.pckl')
+dyn.run(fmax=i['EDIFFG']*-2)
 
 import os
 os.makedirs('improved_ts', exist_ok=True)
