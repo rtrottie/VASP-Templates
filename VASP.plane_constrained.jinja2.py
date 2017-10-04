@@ -11,7 +11,7 @@ from Classes_ASE import StandardVasp as Vasp
 from Classes_ASE import InvertPlane, InPlane, HookeanPlane
 from Classes_Pymatgen import Incar
 from ase.io import read
-from ase.optimize.precon import PreconFIRE as FIRE
+from ase.optimize import BFGSLineSearch as Optimizer
 
 atoms = read('POSCAR')
 atoms.set_calculator(Vasp())
@@ -24,7 +24,7 @@ i.write_file('INCAR')
 c = HookeanPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
-dyn = FIRE(atoms, trajectory='run.traj', restart='history.pckl')
+dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
 dyn.run(fmax=i['EDIFFG']*-2)
 
 import os
@@ -35,6 +35,6 @@ atoms.set_calculator(Vasp())
 i = Incar.from_file('INCAR')
 c = InvertPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
-dyn = FIRE(atoms)
+dyn = Optimizer(atoms)
 dyn.run(fmax=i['EDIFFG']*-1)
 {% endblock python %}
