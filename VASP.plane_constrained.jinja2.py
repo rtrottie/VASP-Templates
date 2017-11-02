@@ -8,7 +8,7 @@ export VASP_PROCS={{ tasks }}
 
 {% block python %}
 from Classes_ASE import StandardVasp as Vasp
-from Classes_ASE import HookeanPlane as KeepInPlane
+from Classes_ASE import InPlane as KeepInPlane
 from Classes_Pymatgen import Incar
 from ase.io import read
 from ase.optimize.precon import PreconFIRE as Optimizer
