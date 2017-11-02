@@ -25,8 +25,8 @@ i.write_file('INCAR')
 c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 atoms.set_constraint(c)
 
+Optimizer.converged = converged_fmax_as_emax
 dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
-dyn.converged = converged_fmax_as_emax
 dyn.run(fmax=i['EDIFFG'])
 
 {% endblock python %}
