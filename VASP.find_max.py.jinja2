@@ -53,7 +53,7 @@ else:
 if os.path.exists('POSCAR.1') and os.path.exists('POSCAR.2'):
     s1 = Poscar.from_file('POSCAR.1').structure
     s2 = Poscar.from_file('POSCAR.2').structure
-    pathway=nebmake('.', s1, s2, 1000)
+    pathway=nebmake('.', s1, s2, 1000, write=False)
 else:
     raise Exception('Need POSCAR.1 and POSCAR.2')
 
