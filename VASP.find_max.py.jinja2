@@ -117,15 +117,16 @@ def get_ts(low, mp, high, max_steps=100):
 
     low_e = get_energy(low)
     high_e = get_energy(high)
-    if abs(low_e - high_e) < target:
+    logging.info('Converging Midpoint')
+    mp_e = get_energy(mp)
+
+    if abs(mp_e - high_e) < target and abs(mp_e - low_e) < target:
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return mp
 
 
     q1 = int((low+mp)/2)
     q3 = int((high+mp)/2)
-    logging.info('Converging Midpoint')
-    mp_e = get_energy(mp)
     logging.info('Converging Q1')
     q1_e = get_energy(q1)
     logging.info('Converging Q3')
