@@ -1,0 +1,147 @@
+#!/bin/bash
+{% if queue_type == "slurm" %}#SBATCH -J {{ name }}
+#SBATCH --time={{ time }}:00:00
+#SBATCH -N {{ nodes }}
+#SBATCH --ntasks-per-node {{ ppn }}
+#SBATCH -o {{ name }}-%j.out
+#SBATCH -e {{ name }}-%j.err
+#SBATCH --qos {{ queue }}
+#SBATCH --mem={{ mem }}
+#SBATCH --account={{ account }}
+{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
+
+{% elif queue_type == "pbs" %}#PBS -j eo
+#PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
+#PBS -l walltime={{ time }}:00:00
+#PBS -q {% if computer == "psiops" %}batch{% else %}{{ queue }}{% endif %}
+#PBS -N {{ name }}
+{% if computer == "peregrine" %}#PBS -A {{ account }}{% endif %}
+cd $PBS_O_WORKDIR
+echo $PBS_O_WORKDIR
+{% endif %}
+
+
+# Set Environment
+
+source ~/.bashrc_vasp
+export OMP_NUM_THREADS={{ openmp }}
+
+
+python -c "
+
+from custodian.vasp.jobs import *
+from custodian.vasp.handlers import *
+from custodian.custodian import *
+from Classes_Custodian import *
+from Neb_Make import nebmake
+import Upgrade_Run
+import logging
+
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
+
+target = {{ target }}
+jobtype = '{{ jobtype }}'
+
+if jobtype == 'Standard':
+    handlers = []
+    job = StandardJob
+else:
+    raise Exception('Must be STandard VASP run')
+
+
+if os.path.exists('POSCAR.1') and os.path.exists('POSCAR.2'):
+    s1 = Poscar.from_file('POSCAR.1').structure
+    s2 = Poscar.from_file('POSCAR.2').structure
+    pathway=nebmake('.', s1, s2, 1000)
+else:
+    raise Exception('Need POSCAR.1 and POSCAR.2')
+
+cwd = os.path.abspath('.')
+settings = [
+    {'dict': 'INCAR',
+     'action': {'_set': {'NSW': 0,
+                         'IOPT' : 0,
+                         'IBRION' : -1,
+                         'EDIFFG' : -1000},
+                }}
+]
+
+def get_energy(i):
+    folder = os.path.join(cwd, str(i).zfill(4))
+    if os.path.exists(folder):
+        try:
+            vasprun = Vasprun(os.path.join(folder, 'vasprun.xml'))
+            if vasprun.converged:
+                return vasprun.final_energy
+        except:
+            pass
+    else:
+        os.mkdir(folder)
+        closest = None
+        for dir in [dir for dir in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, dir))]:
+            try:
+                if i == int(dir):
+                    pass
+                elif closest == None:
+                    closest = dir
+                elif abs(i - int(closest)) >= abs(i - int(dir)):
+                    closest = dir
+            except:
+                pass
+        if closest:
+            shutil.copy(os.path.join(closest, 'WAVECAR'), os.path.join(folder, 'WAVECAR'))
+            shutil.copy(os.path.join(closest, 'CHGCAR'), os.path.join(folder, 'CHGCAR'))
+
+    shutil.copy('INCAR', os.path.join(folder, 'INCAR'))
+    shutil.copy('KPOINTS', os.path.join(folder, 'KPOINTS'))
+    shutil.copy('POTCAR', os.path.join(folder, 'POTCAR'))
+    os.chdir(folder)
+    Poscar(pathway[i]).write_file('POSCAR')
+    incar = Incar.from_file('INCAR')
+    if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
+        vasp = '{{ vasp_gamma }}'
+    else:
+        vasp = '{{ vasp_kpts }}'
+    j = job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, final=True, settings_override=settings)
+    c = Custodian(handlers, [j], max_errors=10)
+    c.run()
+    os.chdir(cwd)
+    return get_energy(i)
+
+def get_ts(low, mp, high, max_steps=100, dE=0.01):
+    logging.info('Finding Max from locations : {} {} {}'.format(low, mp, high))
+    if mp == low or mp == high:
+        logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
+        return mp
+
+    low_e = get_energy(low)
+    high_e = get_energy(high)
+    if abs(low_e - high_e) < dE:
+        logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
+        return mp
+
+
+    q1 = int((low+mp)/2)
+    q3 = int((high+mp)/2)
+    logging.info('Converging Midpoint')
+    mp_e = get_energy(mp)
+    logging.info('Converging Q1')
+    q1_e = get_energy(q1)
+    logging.info('Converging Q3')
+    q3_e = get_energy(q3)
+    logging.info('Locations : {:<12} {:<12} {:<12}'.format(q1, mp, q3))
+    logging.info('Energies  : {:.10} {:.10} {:.10}'.format(q1_e, mp_e, q3_e))
+    if q3_e >= mp_e and q3_e >= q1_e:
+        return get_ts(mp, q3, high)
+    elif mp_e >= q1_e and mp_e >= q3_e:
+        return get_ts(q1, mp, q3)
+    elif q1_e >= mp_e and q1_e >= q3_e:
+        return get_ts(low, q1, mp)
+    else:
+        raise Exception('WHHHHYYY')
+
+
+
+print(get_ts(0, int(len(pathway)/2) , int(len(pathway)-1)))
+"
