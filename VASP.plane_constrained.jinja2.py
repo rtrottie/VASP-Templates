@@ -36,5 +36,6 @@ atoms.set_constraint(c)
 Optimizer.converged = converged_fmax_as_emax
 dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
 dyn.run(fmax=i['EDIFFG'])
+print('Done')
 
 {% endblock python %}
