@@ -144,5 +144,6 @@ def get_ts(low, mp, high, max_steps=100):
 
 
 
-print(get_ts(0, int(len(pathway)/2) , int(len(pathway)-1)))
+ts = (get_ts(0, int(len(pathway)/2) , int(len(pathway)-1)))
+logging.info('TS Index : {}\nTS Energy : {}'.format(ts, get_energy(ts)))
 "
