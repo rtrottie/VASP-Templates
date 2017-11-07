@@ -12,6 +12,18 @@ from Classes_ASE import converged_fmax_as_emax
 from Classes_Pymatgen import Incar
 from ase.io import read
 from ase.optimize.precon import PreconFIRE as Optimizer
+import logging
+import sys
+
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+root.addHandler(ch)
 
 i = Incar.from_file('INCAR')
 if 'CONSATOM3' in i:
