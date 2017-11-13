@@ -26,16 +26,16 @@ ch.setFormatter(formatter)
 root.addHandler(ch)
 
 i = Incar.from_file('INCAR')
+atoms = read('POSCAR')
 if 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 else:
-    from Classes_ASE import InMPPlane as KeepInPlane
+    from Classes_ASE import InMPPlaneXY as KeepInPlane
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2']))
 
 
 
-atoms = read('POSCAR')
 atoms.set_calculator(Vasp())
 i = Incar.from_file('INCAR')
 i['NSW'] = 0
