@@ -67,7 +67,7 @@ settings = [
                 }}
 ]
 
-def get_energy(i):
+def get_energy(i, structure):
     folder = os.path.join(cwd, str(i).zfill(4))
     if os.path.exists(folder):
         try:
@@ -97,7 +97,7 @@ def get_energy(i):
     shutil.copy('KPOINTS', os.path.join(folder, 'KPOINTS'))
     shutil.copy('POTCAR', os.path.join(folder, 'POTCAR'))
     os.chdir(folder)
-    Poscar(pathway[i]).write_file('POSCAR')
+    Poscar(structure).write_file('POSCAR')
     incar = Incar.from_file('INCAR')
     if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
         vasp = '{{ vasp_gamma }}'
@@ -115,18 +115,26 @@ def get_ts(low, mp, high, max_steps=100):
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return mp
 
-    low_e = get_energy(low)
-    high_e = get_energy(high)
+    start_struct = Structure.from_file(os.path.join(str(low).zfill(4), 'POSCAR'))
+    final_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
+    if os.path.exists(os.path.join(str(mp).zfill(4), 'POSCAR')):
+        mp_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
+    else:
+        mp_struct = nebmake('.', start_struct, final_struct, 2, write=False)[1]
+
+    low_e = get_energy(low, start_struct)
+    high_e = get_energy(high, final_struct)
     logging.info('Converging Midpoint')
-    mp_e = get_energy(mp)
+    mp_e = get_energy(mp, mp_struct)
 
     if abs(mp_e - high_e) < target and abs(mp_e - low_e) < target:
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return mp
+    q1_struct = nebmake('.', start_struct, mp_struct, 2, write=False)[1]
+    q2_struct = nebmake('.', mp_struct, final_struct, 2, write=False)[1]
 
-
-    q1 = int((low+mp)/2)
-    q3 = int((high+mp)/2)
+    q1 = int((low+mp)/2, q1_struct)
+    q3 = int((high+mp)/2, q2_struct)
     logging.info('Converging Q1')
     q1_e = get_energy(q1)
     logging.info('Converging Q3')
