@@ -50,12 +50,12 @@ else:
     raise Exception('Must be STandard VASP run')
 
 
-if os.path.exists('POSCAR.1') and os.path.exists('POSCAR.2'):
-    s1 = Poscar.from_file('POSCAR.1').structure
-    s2 = Poscar.from_file('POSCAR.2').structure
-    pathway=nebmake('.', s1, s2, 1000, write=False)
-else:
-    raise Exception('Need POSCAR.1 and POSCAR.2')
+# if os.path.exists('POSCAR.1') and os.path.exists('POSCAR.2'):
+#     s1 = Poscar.from_file('POSCAR.1').structure
+#     s2 = Poscar.from_file('POSCAR.2').structure
+#     pathway=nebmake('.', s1, s2, 1000, write=False)
+# else:
+#     raise Exception('Need POSCAR.1 and POSCAR.2')
 
 cwd = os.path.abspath('.')
 settings = [
@@ -151,7 +151,7 @@ def get_ts(low, mp, high, max_steps=100):
         raise Exception('WHHHHYYY')
 
 
-
-ts = (get_ts(0, int(len(pathway)/2) , int(len(pathway)-1)))
+pathway = 9999
+ts = get_ts(0, int(pathway/2) , pathway)
 logging.info('TS Index : {}\nTS Energy : {}'.format(ts, get_energy(ts)))
 "
