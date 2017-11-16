@@ -131,14 +131,14 @@ def get_ts(low, mp, high, max_steps=100):
         logging.info('Found Max at : {} with E= {:.10}'.format(mp, ))
         return mp
     q1_struct = nebmake('.', start_struct, mp_struct, 2, write=False)[1]
-    q2_struct = nebmake('.', mp_struct, final_struct, 2, write=False)[1]
+    q3_struct = nebmake('.', mp_struct, final_struct, 2, write=False)[1]
 
-    q1 = int((low+mp)/2, q1_struct)
-    q3 = int((high+mp)/2, q2_struct)
+    q1 = int((low+mp)/2)
+    q3 = int((high+mp)/2)
     logging.info('Converging Q1')
-    q1_e = get_energy(q1)
+    q1_e = get_energy(q1, q1_struct)
     logging.info('Converging Q3')
-    q3_e = get_energy(q3)
+    q3_e = get_energy(q3, q3_struct)
     logging.info('Locations : {:<12} {:<12} {:<12}'.format(q1, mp, q3))
     logging.info('Energies  : {:.10} {:.10} {:.10}'.format(q1_e, mp_e, q3_e))
     if q3_e >= mp_e and q3_e >= q1_e:
