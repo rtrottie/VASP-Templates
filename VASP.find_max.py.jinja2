@@ -153,5 +153,5 @@ def get_ts(low, mp, high, max_steps=100):
 
 pathway = 9999
 ts = get_ts(0, int(pathway/2) , pathway)
-logging.info('TS Index : {}\nTS Energy : {}'.format(ts, 'None'))
+logging.info('TS Index : {}\nTS Energy : {}'.format(ts, Structure.from_file(os.path.join(str(ts).zfill(4), 'POSCAR'))))
 "
