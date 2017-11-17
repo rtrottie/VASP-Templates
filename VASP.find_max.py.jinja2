@@ -118,7 +118,7 @@ def get_ts(low, mp, high, max_steps=100):
     start_struct = Structure.from_file(os.path.join(str(low).zfill(4), 'POSCAR'))
     final_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
     if os.path.exists(os.path.join(str(mp).zfill(4), 'POSCAR')):
-        mp_struct = Structure.from_file(os.path.join(str(high).zfill(4), 'POSCAR'))
+        mp_struct = Structure.from_file(os.path.join(str(mp).zfill(4), 'POSCAR'))
     else:
         mp_struct = nebmake('.', start_struct, final_struct, 2, write=False)[1]
 
@@ -153,5 +153,5 @@ def get_ts(low, mp, high, max_steps=100):
 
 pathway = 9999
 ts = get_ts(0, int(pathway/2) , pathway)
-logging.info('TS Index : {}\nTS Energy : {}'.format(ts, get_energy(ts)))
+logging.info('TS Index : {}\nTS Energy : {}'.format(ts, 'None'))
 "
