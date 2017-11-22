@@ -30,6 +30,9 @@ atoms = read('POSCAR')
 if 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
+if 'SURFACE_REFERENCE' in i:
+    from Classes_ASE import InMPPlane_SurfaceReference as KeepInPlane
+    c=KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['SURFACE_REFERENCE'])
 else:
     from Classes_ASE import InMPPlaneXY as KeepInPlane
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2']))
