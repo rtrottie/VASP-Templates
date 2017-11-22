@@ -110,7 +110,7 @@ def get_energy(i, structure):
                 closest = dir
         except:
             pass
-    for dir_i, dir in [(above, 'above'), (below, 'below')]:
+    for dir_i, dir in [(str(above), 'above'), (str(below), 'below')]:
         try:
             vasprun = Vasprun(os.path.join(folder, dir, 'vasprun.xml'))
             if vasprun.converged:
