@@ -51,7 +51,7 @@ if 'IOPT' in i:
 i.write_file('INCAR')
 atoms.set_constraint(c)
 
-Optimizer.converged = converged_fmax_as_emax
+Optimizer.converged = converged_fmax_or_emax
 dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
 dyn.run(fmax=i['EDIFFG'])
 print('Done')
