@@ -54,10 +54,7 @@ def get_runs(max_steps=100):
             settings = Upgrade_Run.parse_stage_update(stages[stage_number], incar)
             settings += continuation
         if stage_number == len(stages) - 1:
-            if 'x'.join(map(str, kpoints.kpts[0])) == '1x1x1':
-                final = True
-            else:
-                final = False
+            final = True
         else:
             final = False
         if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
