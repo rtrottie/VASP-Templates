@@ -11,7 +11,7 @@ from Classes_ASE import StandardVasp as Vasp
 from Classes_ASE import converged_fmax_or_emax
 from Classes_Pymatgen import Incar
 from ase.io import read
-from ase.optimize import FIRE as Optimizer
+from ase.optimize.precon.fire import PreconFIRE as Optimizer
 import logging
 import sys
 
