@@ -29,6 +29,7 @@ i = Incar.from_file('INCAR')
 atoms = read('POSCAR')
 if 'CONSATOM3' in i and 'CONTINUE_3PT' in i:
     from Classes_ASE import LockedTo3AtomPlane
+    print('3 Atom Constraint cont.')
     c = LockedTo3AtomPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 if 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
