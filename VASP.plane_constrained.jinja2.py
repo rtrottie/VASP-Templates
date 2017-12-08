@@ -27,11 +27,14 @@ root.addHandler(ch)
 
 i = Incar.from_file('INCAR')
 atoms = read('POSCAR')
+if 'CONSATOM3' in i and 'CONTINUE_3PT' in i:
+    from Classes_ASE import LockedTo3AtomPlane
+    c = LockedTo3AtomPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
 if 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
     print('3 Atom Constraint')
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
-if 'SURFACE_REFERENCE' in i:
+elif 'SURFACE_REFERENCE' in i:
     from Classes_ASE import InMPPlane_SurfaceReference as KeepInPlane
     print('Perpendicular Constraint using Reference POSCAR')
     c=KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2']), i['SURFACE_REFERENCE'])
