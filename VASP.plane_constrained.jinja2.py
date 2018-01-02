@@ -11,6 +11,7 @@ from Classes_ASE import StandardVasp as Vasp
 from Classes_ASE import converged_fmax_or_emax
 from Classes_Pymatgen import Incar
 from ase.io import read
+from ase import Atoms
 from ase.optimize.precon.fire import PreconFIRE as Optimizer
 import logging
 import sys
@@ -30,7 +31,8 @@ atoms = read('POSCAR')
 if 'CONSATOM3' in i and 'CONTINUE_3PT' in i:
     from Classes_ASE import LockedTo3AtomPlane
     print('3 Atom Constraint cont.')
-    c = LockedTo3AtomPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']))
+    a = read('POSCAR')# type: Atoms
+    c = LockedTo3AtomPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']), a.positions[i['DIFFATOM']])
 elif 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
     print('3 Atom Constraint')
