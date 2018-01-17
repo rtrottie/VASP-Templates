@@ -33,6 +33,10 @@ if 'CONSATOM3' in i and 'CONTINUE_3PT' in i:
     print('3 Atom Constraint cont.')
     a = read('POSCAR')# type: Atoms
     c = LockedTo3AtomPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2'], i['CONSATOM3']), a.positions[i['DIFFATOM']])
+if 'CONSTYPE' in i and i['CONSTYPE'] == 'Bond':
+    from ase.constraints import FixBondLengths
+    print('Constraining Bonds')
+    c = FixBondLengths([[i['DIFFATOM'], i['CONSATOM1']], [i['DIFFATOM'], i['CONSATOM2']]])
 elif 'CONSATOM3' in i:
     from Classes_ASE import InPlane as KeepInPlane
     print('3 Atom Constraint')
