@@ -118,9 +118,9 @@ dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
 dyn.run(fmax=-i['EDIFFG'])
 if iterate:
     print('Converged')
+    atoms = read('POSCAR')  # type: Atoms
     dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
     dyn.run(fmax=-i['EDIFFG'])
-    atoms = dyn.atoms()
     c = iterate()
 print('Done')
 {% endblock python %}
