@@ -102,7 +102,7 @@ else:
     c = KeepInPlane(i['DIFFATOM'], (i['CONSATOM1'], i['CONSATOM2']))
 
 
-
+atoms.wrap(atoms.get_scaled_positions()[i['DIFFATOM']])
 atoms.set_calculator(Vasp())
 i = Incar.from_file('INCAR')
 i['NSW'] = 0
