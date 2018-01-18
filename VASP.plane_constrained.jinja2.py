@@ -84,7 +84,6 @@ if 'CONSTYPE' in i and i['CONSTYPE'] == 'Bond':
                     ]
             return FixInternals(bonds=bonds)
 
-
     else:
         from ase.constraints import FixBondLengths
         print('Constraining Bonds')
