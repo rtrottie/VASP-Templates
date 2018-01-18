@@ -46,43 +46,43 @@ if 'CONSTYPE' in i and i['CONSTYPE'] == 'Bond':
             [ bond2, [ i['DIFFATOM'], i['CONSATOM2'] ] ]
                 ]
         c = FixInternals(bonds=bonds)
-        def iterate(atoms : Atoms):
-            delta = 0.01
-            global bond1
-            global bond2
-            force = atoms.get_forces()[i['DIFFATOM']]
-            bond1_dist   = atoms.get_distance(i['DIFFATOM'], i['CONSATOM1'], vector=False)
-            bond1_vector = atoms.get_distance(i['DIFFATOM'], i['CONSATOM1'], vector=True )
-            bond1_unit = bond1_vector / bond1_dist
-            bond2_dist   = atoms.get_distance(i['DIFFATOM'], i['CONSATOM2'], vector=False)
-            bond2_vector = atoms.get_distance(i['DIFFATOM'], i['CONSATOM2'], vector=True )
-            bond2_unit = bond2_vector / bond2_dist
-
-            bond1_projection = np.dot(force, bond1_unit)
-            bond2_projection = np.dot(force, bond2_unit)
-            if abs(bond1_projection) > bond2_projection:
-                if bond1_projection > 0:
-                    print('Growing Bond 1')
-                    bond1 += delta
-                    bond2 -= delta / 4
-                else:
-                    print('Shrinking Bond 1')
-                    bond1 -= delta
-                    bond2 += delta / 4
-            else:
-                if bond2_projection > 0:
-                    print('Growing Bond 2')
-                    bond2 += delta
-                    bond1 -= delta / 4
-                else:
-                    print('Shrinking Bond 2')
-                    bond2 -= delta
-                    bond1 += delta / 4
-            bonds = [
-                [ bond1, [ i['DIFFATOM'], i['CONSATOM1'] ] ],
-                [ bond2, [ i['DIFFATOM'], i['CONSATOM2'] ] ]
-                    ]
-            return FixInternals(bonds=bonds)
+        # def iterate(atoms : Atoms):
+        #     delta = 0.01
+        #     global bond1
+        #     global bond2
+        #     force = atoms.get_forces()[i['DIFFATOM']]
+        #     bond1_dist   = atoms.get_distance(i['DIFFATOM'], i['CONSATOM1'], vector=False)
+        #     bond1_vector = atoms.get_distance(i['DIFFATOM'], i['CONSATOM1'], vector=True )
+        #     bond1_unit = bond1_vector / bond1_dist
+        #     bond2_dist   = atoms.get_distance(i['DIFFATOM'], i['CONSATOM2'], vector=False)
+        #     bond2_vector = atoms.get_distance(i['DIFFATOM'], i['CONSATOM2'], vector=True )
+        #     bond2_unit = bond2_vector / bond2_dist
+        #
+        #     bond1_projection = np.dot(force, bond1_unit)
+        #     bond2_projection = np.dot(force, bond2_unit)
+        #     if abs(bond1_projection) > bond2_projection:
+        #         if bond1_projection > 0:
+        #             print('Growing Bond 1')
+        #             bond1 += delta
+        #             bond2 -= delta / 4
+        #         else:
+        #             print('Shrinking Bond 1')
+        #             bond1 -= delta
+        #             bond2 += delta / 4
+        #     else:
+        #         if bond2_projection > 0:
+        #             print('Growing Bond 2')
+        #             bond2 += delta
+        #             bond1 -= delta / 4
+        #         else:
+        #             print('Shrinking Bond 2')
+        #             bond2 -= delta
+        #             bond1 += delta / 4
+        #     bonds = [
+        #         [ bond1, [ i['DIFFATOM'], i['CONSATOM1'] ] ],
+        #         [ bond2, [ i['DIFFATOM'], i['CONSATOM2'] ] ]
+        #             ]
+        #     return FixInternals(bonds=bonds)
 
 
     else:
