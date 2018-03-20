@@ -34,6 +34,8 @@ from custodian.vasp.handlers import *
 from Classes_Custodian import *
 import logging
 from algorithms import get_energy, get_ts
+import os
+from Helpers import isint
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, filename='run.log')
@@ -60,4 +62,11 @@ cwd = os.path.abspath('.')
 pathway = 9999
 ts = get_ts(0, int(pathway/2) , pathway, target)
 logging.info('TS Index : {}\nTS Energy : {}'.format(ts, Structure.from_file(os.path.join(str(ts).zfill(4), 'POSCAR'))))
+
+from ase.io import read, write
+dirs = [ x for x in os.listdir('.') if isint(x) ]
+dirs.sort()
+atoms = [ read(os.path.join(x, 'POSCAR')) for x in dirs ]
+write('path.xyz', atoms)
+
 "
