@@ -65,6 +65,16 @@ if os.path.exists('nupdown_info'):  # Determine if full check must be done or if
 else:
     nupdown_check = True
 
+if 'PBS_START_TIME' in os.environ:
+    import calendar
+    start_time = int(os.environ['PBS_START_TIME'])
+    current_time = calendar.timegm(time.gmtime())
+    elapsed_time = current_time - start_time
+    walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
+    buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
+    if buffer_time*5 > walltime:
+        exitcode = 101
+        raise Exception('Not Enough Time')
 
 
 if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
