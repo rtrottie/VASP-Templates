@@ -70,8 +70,9 @@ if 'PBS_START_TIME' in os.environ:
     start_time = int(os.environ['PBS_START_TIME'])
     current_time = calendar.timegm(time.gmtime())
     elapsed_time = current_time - start_time
-    walltime = int(os.environ['PBS_WALLTIME']) - elapsed_time
-    buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
+    orig_walltime = int(os.environ['PBS_WALLTIME'])
+    walltime = orig_walltime - elapsed_time
+    buffer_time = min(45 * 60, orig_walltime / 24)
     if buffer_time*5 > walltime:
         exitcode = 101
         raise Exception('Not Enough Time')
