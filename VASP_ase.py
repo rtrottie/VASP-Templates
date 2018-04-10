@@ -6,7 +6,7 @@ from custodian.vasp.handlers import *
 import numpy as np
 from custodian.custodian import *
 from Classes_Pymatgen import *
-from Classes_Custodian import StandardJob
+from Classes_Custodian import StandardJob, NonConvergingErrorHandler_toDamped
 
 
 

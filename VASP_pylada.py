@@ -6,7 +6,7 @@ from custodian.vasp.handlers import *
 import numpy as np
 from custodian.custodian import *
 from Classes_Pymatgen import *
-from Classes_Custodian import StandardJob, NEBJob
+from Classes_Custodian import StandardJob, NEBJob, NonConvergingErrorHandler_toDamped
 import shutil
 import calendar
 import time
@@ -59,7 +59,7 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_GAMMA']
     else:
         vasp = os.environ['VASP_KPTS']
-    handlers = [PositiveEnergyErrorHandler()]
+    handlers = [PositiveEnergyErrorHandler(), NonConvergingErrorHandler_toDamped(nionic_steps=20)]
     if 'PBS_START_TIME' in os.environ:
         start_time = int(os.environ['PBS_START_TIME'])
         current_time = calendar.timegm(time.gmtime())
