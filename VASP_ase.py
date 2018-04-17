@@ -20,7 +20,7 @@ def energy(suffix=''):
     v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
-def run_vasp(override=[], suffix=''):
+def run_vasp(override=[], suffix='', walltime=None, buffer_time=None):
     '''
     execute vasp with given override and suffix
 
@@ -39,8 +39,9 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_GAMMA']
     else:
         vasp = os.environ['VASP_KPTS']
-
     handlers = []
+    if walltime:
+        handlers = += [WalltimeHandler(wall_time=walltime, buffer_time=buffer_time, electronic_step_stop=True,)]
     vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
                            settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
@@ -72,10 +73,13 @@ if 'PBS_START_TIME' in os.environ:
     elapsed_time = current_time - start_time
     orig_walltime = int(os.environ['PBS_WALLTIME'])
     walltime = orig_walltime - elapsed_time
-    buffer_time = min(45 * 60, orig_walltime / 24)
+    buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
     if buffer_time*5 > walltime:
         exitcode = 101
         raise Exception('Not Enough Time')
+else:
+    walltime = None
+    buffer_time = None
 
 
 if 'AUTO_NUPDOWN' in incar and not nupdown_check: # have a guess of nupdown
@@ -112,6 +116,6 @@ elif 'AUTO_NUPDOWN' in incar and nupdown_check: # First run in new folder
             shutil.copy(f, f[:-len('.' + str(nupdown_best))])
 
 else:
-    run_vasp()
+    run_vasp(walltime=walltime, buffer_time=buffer_time)
 
 exitcode = 0
