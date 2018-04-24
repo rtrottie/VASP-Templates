@@ -14,7 +14,7 @@ vasp_gamma =  '{{ vasp_gamma }}'
 
 
 if jobtype == 'NEB':
-    handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
+    handlers = [NEBWalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
     job = NEBJob
     images = Incar.from_file('INCAR')['IMAGES']
     continuation = []
