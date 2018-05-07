@@ -56,7 +56,7 @@ except:
 
 incar = Incar.from_file('INCAR')
 # Check for NUPDOWN
-if os.path.exists('nupdown_info'):  # Determine if full check must be done or if just using past NUPDOWN
+if os.path.exists('nupdown_info') and 'AUTO_NUPDOWN' in incar:  # Determine if full check must be done or if just using past NUPDOWN
     with open('nupdown_info') as f:
         lines = f.readlines()
         nupdown_best = int(lines[0].strip())  # optimal NUPDOWN is first line
