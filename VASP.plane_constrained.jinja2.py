@@ -111,6 +111,7 @@ if i['EDIFFG'] < 0:
     i['NELMIN'] = 3
     i['IBRION'] = 3
     i['POTIM'] = 0
+    i['PC_EDIFFG'] = i['EDIFFG']
     i['EDIFFG'] = 1e-5
     if 'IOPT' in i:
         del i['IOPT']
