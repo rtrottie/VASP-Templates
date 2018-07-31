@@ -119,7 +119,7 @@ if i['EDIFFG'] < 0:
 atoms.set_constraint(c)
 
 Optimizer.converged = converged_fmax_or_emax
-dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
+dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl', logfile='ase.out')
 dyn.run(fmax=-i['PC_EDIFFG'])
 if iterate:
     print('Converged')
