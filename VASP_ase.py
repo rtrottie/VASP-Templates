@@ -73,8 +73,8 @@ if 'PBS_START_TIME' in os.environ:
     elapsed_time = current_time - start_time
     orig_walltime = int(os.environ['PBS_WALLTIME'])
     walltime = orig_walltime - elapsed_time
-    buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
-    if buffer_time*5 > walltime:
+    buffer_time = min(45 * 60, walltime / 20)
+    if buffer_time*2 > walltime:
         exitcode = 101
         raise Exception('Not Enough Time')
 else:
