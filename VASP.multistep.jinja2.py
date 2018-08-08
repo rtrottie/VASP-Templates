@@ -58,7 +58,7 @@ def get_runs(max_steps=100):
         else:
             final = False
         if ('AUTO_GAMMA' in incar and incar['AUTO_GAMMA']):
-            vasp = vasp_gamma
+            vasp = os.environ['VASP_GAMMA']
         else:
             vasp = vasp_kpts
         yield job(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, settings_override=settings, final=final)
