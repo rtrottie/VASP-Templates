@@ -19,7 +19,7 @@ echo $PBS_O_WORKDIR{% endif %}
 
 {% block environment %}
 # Set Environment
-source ~/.bashrc_vasp
+source {{ vasp_bashrc }}
 export OMP_NUM_THREADS={{ openmp }} {% endblock environment %}
 
 {% block vasp %}
