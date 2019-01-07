@@ -1,22 +1,13 @@
 #!/bin/bash
 {% if queue_type == "slurm" and computer != "eagle" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH -N {{ nodes }}
-#SBATCH --ntasks-per-node {{ ppn }}
 #SBATCH -o {{ name }}-%j.out
 #SBATCH -e {{ name }}-%j.err
-#SBATCH --qos {{ queue }}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
-{% if queue_type == "slurm" and computer == "eagle" %}#SBATCH -J {{ name }}
-#SBATCH --time={{ time }}:00:00
-#SBATCH -N {{ nodes }}
-#SBATCH --tasks {{ tasks }}
-#SBATCH -o {{ name }}-%j.out
-#SBATCH -e {{ name }}-%j.err
-#SBATCH --account={{ account }}
-{% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
+{% if computer == "summit" %}#SBATCH --qos {{ queue }}
+#SBATCH -N {{ nodes }} {% endif %}
 {% elif queue_type == "pbs" %}#PBS -j eo
 #PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
 #PBS -l walltime={{ time }}:00:00
