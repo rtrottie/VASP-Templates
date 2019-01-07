@@ -1,8 +1,8 @@
 #!/bin/bash
 {% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH -o {{ name }}-%j.out
-#SBATCH -e {{ name }}-%j.err
+#SBATCH -o {{ name }}-.o%j
+#SBATCH -e {{ name }}-.e%j
 #SBATCH --tasks {{ tasks }}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
