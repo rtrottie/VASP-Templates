@@ -1,10 +1,11 @@
 #!/bin/bash
 {% if queue_type == "slurm" and computer == "eagle" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH -o {{ name }}-.o%j
-#SBATCH -e {{ name }}-.e%j
+#SBATCH -o {{ name }}.o%j
+#SBATCH -e {{ name }}.e%j
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
+#SBATCH --tasks {{ tasks }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
 {% if computer == "summit" %}#SBATCH --qos {{ queue }}
 #SBATCH -N {{ nodes }} {% endif %}
