@@ -1,5 +1,5 @@
 #!/bin/bash
-{% if queue_type == "slurm" and computer != "eagle" %}#SBATCH -J {{ name }}
+{% if queue_type == "slurm" and computer == "eagle" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
 #SBATCH -o {{ name }}-%j.out
 #SBATCH -e {{ name }}-%j.err
