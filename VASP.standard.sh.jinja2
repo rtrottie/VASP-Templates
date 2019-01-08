@@ -4,6 +4,7 @@
 #SBATCH -o {{ name }}-.o%j
 #SBATCH -e {{ name }}-.e%j
 #SBATCH --tasks {{ tasks }}
+#SBATCH --nodes {{ nodes }}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
 {% if computer == "summit"%}#SBATCH --qos {{ queue }}
