@@ -7,6 +7,7 @@
 #SBATCH --account={{ account }}
 #SBATCH --tasks {{ tasks }}
 #SBATCH --nodes {{ nodes }}
+#SBATCH --ntasks-per-node {{ ppn }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
 {% if computer == "summit" %}#SBATCH --qos {{ queue }}
 #SBATCH -N {{ nodes }} {% endif %}
