@@ -48,12 +48,12 @@ else:
 
 {% if jobtype == "NEB" %}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
-vaspjob = [NEBJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = [NEBJob(['{{ mpi }}',{% if mpi != "srun" %} '-np',{% endif %} '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             DimerDivergingHandler(), DimerCheckMins()]
-vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = [DimerJob(['{{ mpi }}',{% if mpi != "srun" %} '-np',{% endif %} '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer-Halting" %}
 def jobs(max_steps=2000):
