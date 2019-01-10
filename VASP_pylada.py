@@ -87,9 +87,14 @@ def run_vasp(override=[], suffix=''):
                 os.makedirs(image_dir, exist_ok=True)
                 image.to(fmt='poscar', filename=os.path.join(image_dir, 'POSCAR'))
                 image_i = image_i + 1
-
-        vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
+        if os.environ['VASP_MPI'] == 'srun':
+            vaspjob = [NEBJobSinglePylada(['srun', vasp], 'vasp.log', auto_npar=False, backup=False, settings_override=override, suffix=suffix, final=False)]
+        else:
+            if os.environ['VASP_MPI'] == 'srun':
+                vaspjob = [NEBJobSinglePylada(['srun', vasp], 'vasp.log', auto_npar=False, backup=False, settings_override=override, suffix=suffix, final=False)]
+            else:
+                vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     else:
         vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                                settings_override=override, suffix=suffix, final=False)]
