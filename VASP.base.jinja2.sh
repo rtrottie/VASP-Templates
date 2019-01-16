@@ -40,7 +40,7 @@ if 'AUTO_GAMMA' in incar and incar['AUTO_GAMMA']:
 else:
     vasp = '{{ vasp_kpts }}'
 
-vaspjob = [{{ jobtype }}Job(['{{ mpi }}',{% if mpi != "srun" %} '-np',{% endif %} '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = [{{ jobtype }}Job(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% if jobtype == "NEB" %}
 handlers = [WalltimeHandler({{ time }}*60*60, 15*60)]
