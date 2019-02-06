@@ -34,7 +34,7 @@ INPUT_BASENAME="{{ name }}"
 INPUT_FILE=$INPUT_BASENAME.gjf
 GAUSSIAN_EXEC=g16
 MEMSIZE=2GB
-SCRATCH=/scratch/$USER/gaussianScratch/$PBS_JOBID
+SCRATCH=/scratch/$USER/gaussianScratch.$PBS_JOBID
 SCRATCH2=/dev/shm
 #
 # Check on editing input file. If scratch directories
