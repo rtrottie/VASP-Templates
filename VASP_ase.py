@@ -42,8 +42,13 @@ def run_vasp(override=[], suffix='', walltime=None, buffer_time=None):
     handlers = []
     if walltime:
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=buffer_time, electronic_step_stop=True,)]
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
+
+    if os.environ['VASP_MPI'] == 'srun':
+        vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
+    else:
+        vaspjob = [StandardJob(['srun', vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
 
