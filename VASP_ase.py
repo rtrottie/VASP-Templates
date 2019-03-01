@@ -58,7 +58,7 @@ except:
         pass
 
 incar = Incar.from_file('INCAR')
-# Check for NUPDOWN
+# Check for NUPDOWNdd
 if os.path.exists('nupdown_info') and 'AUTO_NUPDOWN' in incar:  # Determine if full check must be done or if just using past NUPDOWN
     with open('nupdown_info') as f:
         lines = f.readlines()
