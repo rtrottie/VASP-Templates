@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 {% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH -N {{ nodes }}
 #SBATCH --ntasks-per-node {{ ppn }}
 #SBATCH -o {{ name }}-%j.out
 #SBATCH -e {{ name }}-%j.err
-#SBATCH --qos {{ queue }}
+{% if computer == "summit" %}#SBATCH --qos {{ queue }}
+#SBATCH -N {{ nodes }} {% endif %}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
