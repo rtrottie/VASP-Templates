@@ -11,23 +11,23 @@ from Classes_Custodian import StandardJob
 
 
 def energy(suffix=''):
-    '''
+    """
     Gets energy for run in current directory
 
     :return:
-    '''
+    """
     from pymatgen.io.vasp.outputs import Vasprun
     v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
 def run_vasp(override=[], suffix=''):
-    '''
+    """
     execute vasp with given override and suffix
 
     :param override:
     :param suffix:
     :return:
-    '''
+    """
     from Classes_Pymatgen import Incar
     from Classes_Custodian import StandardJob
     from custodian.custodian import Custodian
