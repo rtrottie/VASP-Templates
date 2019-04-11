@@ -2,7 +2,6 @@
 {% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
 #SBATCH -N {{ nodes }}
-#SBATCH --ntasks-per-node {{ cores }}
 #SBATCH -o {{ name }}-%j.out
 #SBATCH -e {{ name }}-%j.err
 #SBATCH --mem={{ mem }}
