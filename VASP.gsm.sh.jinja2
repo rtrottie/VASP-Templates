@@ -5,7 +5,6 @@
 #SBATCH --ntasks-per-node {{ cores }}
 #SBATCH -o {{ name }}-%j.out
 #SBATCH -e {{ name }}-%j.err
-#SBATCH --qos {{ queue }}
 #SBATCH --mem={{ mem }}
 #SBATCH --account={{ account }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
