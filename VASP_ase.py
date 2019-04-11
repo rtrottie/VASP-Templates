@@ -76,7 +76,10 @@ if 'PBS_START_TIME' in os.environ:
     start_time = int(os.environ['PBS_START_TIME'])
     current_time = calendar.timegm(time.gmtime())
     elapsed_time = current_time - start_time
-    orig_walltime = int(os.environ['PBS_WALLTIME'])
+    if 'PBS_WALLTIME' in os.environ:
+        orig_walltime = int(os.environ['PBS_WALLTIME'])
+    else:
+        walltime = 240*60*60
     walltime = orig_walltime - elapsed_time
     buffer_time = min(45 * 60, walltime / 20)
     if buffer_time*2 > walltime:
