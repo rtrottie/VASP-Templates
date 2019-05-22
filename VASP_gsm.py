@@ -41,8 +41,13 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_KPTS']
 
     handlers = [VaspErrorHandler(output_filename='vasp.log')]
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
+    handlers = []
+    if os.environ['VASP_MPI'] == 'srun':
+        vaspjob = [StandardJob(['srun', vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
+    else:
+        vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
 

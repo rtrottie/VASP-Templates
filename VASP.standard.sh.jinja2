@@ -47,7 +47,7 @@ else:
     vasp = '{{ vasp_kpts }}'
 
 {% if jobtype == "NEB" %}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
+handlers = [NEBWalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
 vaspjob = [NEBJob(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer" %}
