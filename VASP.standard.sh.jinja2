@@ -94,7 +94,7 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 vaspjob = jobs()
 
 {% elif jobtype == "Standard" or jobtype%}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NonConvergingErrorHandler_toDamped(nionic_steps=10, change_algo=True)]
+handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NonConvergingErrorHandler_toDamped(nionic_steps=20)]
 vaspjob = [StandardJob(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% endif %}
