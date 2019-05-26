@@ -64,7 +64,10 @@ def run_vasp(override=[], suffix=''):
         start_time = int(os.environ['PBS_START_TIME'])
         current_time = calendar.timegm(time.gmtime())
         elapsed_time = current_time - start_time
-        walltime = int(os.environ['PBS_WALLTIME'])
+        if 'PBS_WALLTIME' in os.environ:
+            walltime = int(os.environ['PBS_WALLTIME'])
+        else:
+            walltime = int(os.environ['VASP_DEFAULT_TIME']) * 60 * 60
         remaining_time = walltime - elapsed_time
         logging.info('Walltime : {}'.format(walltime))
         buffer_time = min(45 * 60, walltime / 50)
