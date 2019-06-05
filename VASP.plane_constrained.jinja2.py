@@ -105,21 +105,27 @@ else:
 atoms.wrap(atoms.get_scaled_positions()[i['DIFFATOM']])
 atoms.set_calculator(Vasp())
 i = Incar.from_file('INCAR')
-i['NSW'] = 0
-i['IBRION'] = -1
-if 'IOPT' in i:
-    del i['IOPT']
-i.write_file('INCAR')
+if i['EDIFFG'] < 0:
+    i['NSW'] = 5000
+    i['NELM'] = 25
+    i['NELMIN'] = 3
+    i['IBRION'] = 3
+    i['POTIM'] = 0
+    i['PC_EDIFFG'] = i['EDIFFG']
+    i['EDIFFG'] = 1e-5
+    if 'IOPT' in i:
+        del i['IOPT']
+    i.write_file('INCAR')
 atoms.set_constraint(c)
 
 Optimizer.converged = converged_fmax_or_emax
-dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
-dyn.run(fmax=-i['EDIFFG'])
+dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl', logfile='ase.out')
+dyn.run(fmax=-i['PC_EDIFFG'])
 if iterate:
     print('Converged')
     atoms = read('POSCAR')  # type: Atoms
     dyn = Optimizer(atoms, trajectory='run.traj', restart='history.pckl')
-    dyn.run(fmax=-i['EDIFFG'])
+    dyn.run(fmax=-i['PC_EDIFFG'])
     c = iterate()
 print('Done')
 {% endblock python %}

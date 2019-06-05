@@ -11,23 +11,23 @@ from Classes_Custodian import StandardJob
 
 
 def energy(suffix=''):
-    '''
+    """
     Gets energy for run in current directory
 
     :return:
-    '''
+    """
     from pymatgen.io.vasp.outputs import Vasprun
     v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
 def run_vasp(override=[], suffix='', walltime=None, buffer_time=None):
-    '''
+    """
     execute vasp with given override and suffix
 
     :param override:
     :param suffix:
     :return:
-    '''
+    """
     from Classes_Pymatgen import Incar
     from Classes_Custodian import StandardJob
     from custodian.custodian import Custodian
@@ -42,8 +42,13 @@ def run_vasp(override=[], suffix='', walltime=None, buffer_time=None):
     handlers = []
     if walltime:
         handlers += [WalltimeHandler(wall_time=walltime, buffer_time=buffer_time, electronic_step_stop=True,)]
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
+
+    if os.environ['VASP_MPI'] == 'srun':
+        vaspjob = [StandardJob(['srun', vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
+    else:
+        vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
 
@@ -53,7 +58,7 @@ except:
         pass
 
 incar = Incar.from_file('INCAR')
-# Check for NUPDOWN
+# Check for NUPDOWNdd
 if os.path.exists('nupdown_info') and 'AUTO_NUPDOWN' in incar:  # Determine if full check must be done or if just using past NUPDOWN
     with open('nupdown_info') as f:
         lines = f.readlines()
@@ -71,10 +76,13 @@ if 'PBS_START_TIME' in os.environ:
     start_time = int(os.environ['PBS_START_TIME'])
     current_time = calendar.timegm(time.gmtime())
     elapsed_time = current_time - start_time
-    orig_walltime = int(os.environ['PBS_WALLTIME'])
+    if 'PBS_WALLTIME' in os.environ:
+        orig_walltime = int(os.environ['PBS_WALLTIME'])
+    else:
+        orig_walltime = 240*60*60
     walltime = orig_walltime - elapsed_time
-    buffer_time = min(45 * 60, walltime * 60 * 60 / 20)
-    if buffer_time*5 > walltime:
+    buffer_time = min(45 * 60, walltime / 20)
+    if buffer_time*2 > walltime:
         exitcode = 101
         raise Exception('Not Enough Time')
 else:

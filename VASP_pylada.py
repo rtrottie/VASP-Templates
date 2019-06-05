@@ -35,23 +35,23 @@ def is_int(s):
         return False
 
 def energy(suffix=''):
-    '''
+    """
     Gets energy for run in current directory
 
     :return:
-    '''
+    """
     from pymatgen.io.vasp.outputs import Vasprun
     v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
 def run_vasp(override=[], suffix=''):
-    '''
+    """
     execute vasp with given override and suffix
 
     :param override:
     :param suffix:
     :return:
-    '''
+    """
 
     # Determine wheter to use Gamma optimized vasp
     incar = Incar.from_file('INCAR')
@@ -59,12 +59,15 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_GAMMA']
     else:
         vasp = os.environ['VASP_KPTS']
-    handlers = [PositiveEnergyErrorHandler(), NonConvergingErrorHandler_toDamped(nionic_steps=20, change_algo=True)]
+    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
     if 'PBS_START_TIME' in os.environ:
         start_time = int(os.environ['PBS_START_TIME'])
         current_time = calendar.timegm(time.gmtime())
         elapsed_time = current_time - start_time
-        walltime = int(os.environ['PBS_WALLTIME'])
+        if 'PBS_WALLTIME' in os.environ:
+            walltime = int(os.environ['PBS_WALLTIME'])
+        else:
+            walltime = int(os.environ['VASP_DEFAULT_TIME']) * 60 * 60
         remaining_time = walltime - elapsed_time
         logging.info('Walltime : {}'.format(walltime))
         buffer_time = min(45 * 60, walltime / 50)
@@ -87,12 +90,21 @@ def run_vasp(override=[], suffix=''):
                 os.makedirs(image_dir, exist_ok=True)
                 image.to(fmt='poscar', filename=os.path.join(image_dir, 'POSCAR'))
                 image_i = image_i + 1
-
-        vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
-    else:
-        vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+        if os.environ['VASP_MPI'] == 'srun':
+            vaspjob = [NEBJobSinglePylada(['srun', vasp], 'vasp.log', auto_npar=False, backup=False, settings_override=override, suffix=suffix, final=False)]
+        else:
+            if os.environ['VASP_MPI'] == 'srun':
+                vaspjob = [NEBJobSinglePylada(['srun', vasp], 'vasp.log', auto_npar=False, backup=False, settings_override=override, suffix=suffix, final=False)]
+            else:
+                vaspjob = [NEBJobSinglePylada(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
                                settings_override=override, suffix=suffix, final=False)]
+    else:
+        if os.environ['VASP_MPI'] == 'srun':
+            vaspjob = [StandardJob(['srun', vasp], 'vasp.log', auto_npar=False, backup=False,
+                                   settings_override=override, suffix=suffix, final=False)]
+        else:
+            vaspjob = [StandardJob(['mpirun', '-np', os.environ['PBS_NP'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                                   settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     if 'STOPCAR' in os.listdir():
         os.remove('STOPCAR')

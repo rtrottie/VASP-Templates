@@ -32,9 +32,9 @@ module load gaussian
 # Set script variables
 INPUT_BASENAME="{{ name }}"
 INPUT_FILE=$INPUT_BASENAME.gjf
-GAUSSIAN_EXEC=g09
+GAUSSIAN_EXEC=g16
 MEMSIZE=2GB
-SCRATCH=/scratch/$USER/gaussianScratch/$PBS_JOBID
+SCRATCH=/scratch/$USER/gaussianScratch.$PBS_JOBID
 SCRATCH2=/dev/shm
 #
 # Check on editing input file. If scratch directories
@@ -56,7 +56,7 @@ fi
 
 #
 # Run gaussian Peregrine script (performs much of the Gaussian setup)
-g09_peregrine
+python2 /nopt/nrel/apps/gaussian/G16.sandy/g16/g16_peregrine
 
 #
 # Set required Gaussian environment variables

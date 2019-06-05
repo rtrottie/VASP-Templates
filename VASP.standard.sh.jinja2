@@ -1,13 +1,15 @@
 #!/bin/bash
 {% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH -N {{ nodes }}
-#SBATCH --ntasks-per-node {{ ppn }}
-#SBATCH -o {{ name }}-%j.out
-#SBATCH -e {{ name }}-%j.err
-#SBATCH --qos {{ queue }}
+#SBATCH -o {{ name }}.o%j
+#SBATCH -e {{ name }}.e%j
+#SBATCH --tasks {{ tasks }}
+#SBATCH --nodes {{ nodes }}
 #SBATCH --mem={{ mem }}
+#SBATCH --ntasks-per-node {{ ppn }}
 #SBATCH --account={{ account }}
+{% if computer == "summit"%}#SBATCH --qos {{ queue }}
+#SBATCH -N {{ nodes }} {% endif %}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
 
 {% elif queue_type == "pbs" %}#PBS -j eo
@@ -45,13 +47,13 @@ else:
     vasp = '{{ vasp_kpts }}'
 
 {% if jobtype == "NEB" %}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
-vaspjob = [NEBJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+handlers = [NEBWalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
+vaspjob = [NEBJob(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer" %}
 handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True),
             DimerDivergingHandler(), DimerCheckMins()]
-vaspjob = [DimerJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+vaspjob = [DimerJob(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% elif jobtype == "Dimer-Halting" %}
 def jobs(max_steps=2000):
@@ -92,8 +94,8 @@ handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), e
 vaspjob = jobs()
 
 {% elif jobtype == "Standard" or jobtype%}
-handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True)]
-vaspjob = [StandardJob(['{{ mpi }}', '-np', '{{ tasks }}', vasp], '{{ logname }}', auto_npar=False, backup=False)]
+handlers = [WalltimeHandler({{ time }}*60*60, min(30*60, {{ time }}*60*60/20), electronic_step_stop=True), NonConvergingErrorHandler_toDamped(nionic_steps=20)]
+vaspjob = [StandardJob(['{{ mpi }}',{% if mpi != "srun" %} '-np', '{{ tasks }}',{% endif %} vasp], '{{ logname }}', auto_npar=False, backup=False)]
 
 {% endif %}
 

@@ -11,23 +11,23 @@ from Classes_Custodian import StandardJob
 
 
 def energy(suffix=''):
-    '''
+    """
     Gets energy for run in current directory
 
     :return:
-    '''
+    """
     from pymatgen.io.vasp.outputs import Vasprun
     v = Vasprun('vasprun.xml' + suffix, parse_dos=False, parse_eigen=False)
     return v.final_energy
 
 def run_vasp(override=[], suffix=''):
-    '''
+    """
     execute vasp with given override and suffix
 
     :param override:
     :param suffix:
     :return:
-    '''
+    """
     from Classes_Pymatgen import Incar
     from Classes_Custodian import StandardJob
     from custodian.custodian import Custodian
@@ -40,9 +40,14 @@ def run_vasp(override=[], suffix=''):
     else:
         vasp = os.environ['VASP_KPTS']
 
+    handlers = [VaspErrorHandler(output_filename='vasp.log')]
     handlers = []
-    vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
-                           settings_override=override, suffix=suffix, final=False)]
+    if os.environ['VASP_MPI'] == 'srun':
+        vaspjob = [StandardJob(['srun', vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
+    else:
+        vaspjob = [StandardJob(['mpirun', '-np', os.environ['VASP_PROCS'], vasp], 'vasp.log', auto_npar=False, backup=False,
+                               settings_override=override, suffix=suffix, final=False)]
     c = Custodian(handlers, vaspjob, max_errors=10)
     c.run()
 
