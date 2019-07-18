@@ -10,6 +10,7 @@
 #SBATCH --ntasks-per-node {{ ppn }}
 {% if nodes == 1 and computer == "janus"%}#SBATCH --reservation=janus-serial {% endif %}
 {% if computer == "summit" %}#SBATCH --qos {{ queue }}
+#SBATCH --export=NONE
 #SBATCH -N {{ nodes }} {% endif %}
 {% elif queue_type == "pbs" %}#PBS -j eo
 #PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
