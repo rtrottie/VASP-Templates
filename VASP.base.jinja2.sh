@@ -11,7 +11,7 @@
 {% if computer == "summit" %}#SBATCH --qos {{ queue }}
 #SBATCH --export=NONE
 #SBATCH -N {{ nodes }} {% endif %}
-{% if computer == "eagle"}#SBATCH --account={{ account }} {% endif %}
+{% if computer == "eagle"%}#SBATCH --account={{ account }} {% endif %}
 {% elif queue_type == "pbs" %}#PBS -j eo
 #PBS -l nodes={{ nodes }}:ppn={{ ppn }}{% if computer == "psiops" %}:{{ queue }}{% endif %}
 #PBS -l walltime={{ time }}:00:00
