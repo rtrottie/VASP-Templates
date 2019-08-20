@@ -59,7 +59,7 @@ def run_vasp(override=[], suffix=''):
         vasp = os.environ['VASP_GAMMA']
     else:
         vasp = os.environ['VASP_KPTS']
-    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10, change_algo=True)]
+    handlers = [VaspErrorHandler('vasp.log'), PositiveEnergyErrorHandler(), NonConvergingErrorHandler(nionic_steps=10)]
     if 'PBS_START_TIME' in os.environ:
         start_time = int(os.environ['PBS_START_TIME'])
         current_time = calendar.timegm(time.gmtime())
