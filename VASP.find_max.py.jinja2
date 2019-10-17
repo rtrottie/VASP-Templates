@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 {% if queue_type == "slurm" %}#SBATCH -J {{ name }}
 #SBATCH --time={{ time }}:00:00
-#SBATCH --ntasks-per-node {{ ppn }}
 #SBATCH -o {{ name }}-.o%j
 #SBATCH -e {{ name }}-.e%j
 #SBATCH --tasks {{ tasks }}
 #SBATCH --nodes {{ nodes }}
+#SBATCH --ntasks-per-node {{ ppn }}
 {% if computer == "summit" %}#SBATCH --qos {{ queue }}
 #SBATCH -N {{ nodes }} {% endif %}
 #SBATCH --mem={{ mem }}
