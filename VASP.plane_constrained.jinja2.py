@@ -12,7 +12,7 @@ from Classes_ASE import converged_fmax_or_emax
 from Classes_Pymatgen import Incar
 from ase.io import read
 from ase import Atoms
-from ase.optimize import FIRE as Optimizer
+from ase.optimize import LBFGS as Optimizer
 import numpy as np
 import logging
 import sys
