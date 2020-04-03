@@ -4,6 +4,7 @@
 source ~/.bashrc_vasp
 export OMP_NUM_THREADS={{ openmp }}
 export VASP_PROCS={{ tasks }}
+export VASP_DEFAULT_BADER=false
 {% endblock environment %}
 
 {% block python %}
